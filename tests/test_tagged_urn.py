@@ -329,18 +329,25 @@ def test_builder_preserves_case():
 
 
 def test_compatibility():
-    urn1 = TaggedUrn.from_string("cap:op=generate;ext=pdf")
-    urn2 = TaggedUrn.from_string("cap:op=generate;format=*")
-    urn3 = TaggedUrn.from_string("cap:image;op=extract")
+    # TEST526: Test directional accepts between general and specific URNs
+    general = TaggedUrn.from_string("cap:op=generate")
+    specific = TaggedUrn.from_string("cap:op=generate;ext=pdf")
 
-    assert urn1.is_compatible_with(urn2)
-    assert urn2.is_compatible_with(urn1)
-    assert not urn1.is_compatible_with(urn3)
+    # General pattern accepts specific instance (no constraint on ext)
+    assert general.accepts(specific)
+    # Specific does NOT accept general (missing ext in instance fails specific pattern's ext=pdf)
+    assert not specific.accepts(general)
 
-    # Missing tags are treated as wildcards for compatibility
-    urn4 = TaggedUrn.from_string("cap:op=generate")
-    assert urn1.is_compatible_with(urn4)
-    assert urn4.is_compatible_with(urn1)
+    # Unrelated URNs: different op values, neither accepts the other
+    urn_extract = TaggedUrn.from_string("cap:image;op=extract")
+    assert not general.accepts(urn_extract)
+    assert not urn_extract.accepts(general)
+
+    # Wildcard format tag: general (no format constraint) accepts urn_format
+    urn_format = TaggedUrn.from_string("cap:op=generate;format=*")
+    assert general.accepts(urn_format)
+    # urn_format does NOT accept general: pattern format=* requires instance to have format tag
+    assert not urn_format.accepts(general)
 
 
 def test_best_match():
@@ -644,7 +651,7 @@ def test_matching_different_prefixes_error():
         urn1.conforms_to(urn2)
 
     with pytest.raises(TaggedUrnError):
-        urn1.is_compatible_with(urn2)
+        urn1.accepts(urn2)
 
     with pytest.raises(TaggedUrnError):
         urn1.is_more_specific_than(urn2)
@@ -774,15 +781,20 @@ def test_empty_value_still_error():
 
 
 def test_valueless_tag_compatibility():
-    # Value-less tags are compatible with any value
-    urn1 = TaggedUrn.from_string("cap:op=generate;ext")
-    urn2 = TaggedUrn.from_string("cap:op=generate;ext=pdf")
-    urn3 = TaggedUrn.from_string("cap:op=generate;ext=docx")
+    # TEST564: Value-less tags (wildcard) accept any specific value
+    urn_wildcard = TaggedUrn.from_string("cap:op=generate;ext")  # ext=*
+    urn_pdf = TaggedUrn.from_string("cap:op=generate;ext=pdf")
+    urn_docx = TaggedUrn.from_string("cap:op=generate;ext=docx")
 
-    assert urn1.is_compatible_with(urn2)
-    assert urn1.is_compatible_with(urn3)
-    # But urn2 and urn3 are not compatible (different specific values)
-    assert not urn2.is_compatible_with(urn3)
+    # Wildcard pattern accepts specific instances
+    assert urn_wildcard.accepts(urn_pdf)
+    assert urn_wildcard.accepts(urn_docx)
+    # Specific instances also accept wildcard (instance * matches pattern's exact value)
+    assert urn_pdf.accepts(urn_wildcard)
+    assert urn_docx.accepts(urn_wildcard)
+    # Different specific values: neither accepts the other
+    assert not urn_pdf.accepts(urn_docx)
+    assert not urn_docx.accepts(urn_pdf)
 
 
 def test_valueless_numeric_key_still_rejected():
@@ -987,29 +999,48 @@ def test_serialization_round_trip_special_values():
 
 
 def test_compatibility_with_special_values():
-    # ! is incompatible with * and specific values
+    # TEST576: Test bidirectional accepts with special values
     must_not = TaggedUrn.from_string("cap:ext=!")
     must_have = TaggedUrn.from_string("cap:ext=*")
     specific = TaggedUrn.from_string("cap:ext=pdf")
     unspecified = TaggedUrn.from_string("cap:ext=?")
     missing = TaggedUrn.from_string("cap:")
 
-    assert not must_not.is_compatible_with(must_have)
-    assert not must_not.is_compatible_with(specific)
-    assert must_not.is_compatible_with(unspecified)
-    assert must_not.is_compatible_with(missing)
-    assert must_not.is_compatible_with(must_not)
+    # ! vs *: neither accepts the other (! conflicts with *)
+    assert not must_not.accepts(must_have)
+    assert not must_have.accepts(must_not)
 
-    # * is compatible with specific values
-    assert must_have.is_compatible_with(specific)
-    assert must_have.is_compatible_with(must_have)
+    # ! vs specific: neither accepts the other
+    assert not must_not.accepts(specific)
+    assert not specific.accepts(must_not)
 
-    # ? is compatible with everything
-    assert unspecified.is_compatible_with(must_not)
-    assert unspecified.is_compatible_with(must_have)
-    assert unspecified.is_compatible_with(specific)
-    assert unspecified.is_compatible_with(unspecified)
-    assert unspecified.is_compatible_with(missing)
+    # ! vs ?: bidirectional (? accepts everything)
+    assert unspecified.accepts(must_not)
+    assert must_not.accepts(unspecified)
+
+    # ! vs missing: missing has no ext constraint, ! has ext=!
+    # missing.accepts(must_not): pattern=missing has no ext constraint -> True
+    assert missing.accepts(must_not)
+    # must_not.accepts(missing): pattern=must_not has ext=!, instance=missing has no ext -> True (absent matches !)
+    assert must_not.accepts(missing)
+
+    # ! vs !: both accept each other
+    assert must_not.accepts(must_not)
+
+    # * vs specific: * accepts specific (pattern * matches any value)
+    assert must_have.accepts(specific)
+    # specific accepts *: pattern specific=pdf, instance *=any -> True (* in instance matches any pattern value)
+    assert specific.accepts(must_have)
+
+    # * vs *: both accept each other
+    assert must_have.accepts(must_have)
+
+    # ? accepts everything
+    assert unspecified.accepts(must_not)
+    assert unspecified.accepts(must_have)
+    assert unspecified.accepts(specific)
+    assert unspecified.accepts(unspecified)
+    assert unspecified.accepts(missing)
 
 
 def test_specificity_with_special_values():
