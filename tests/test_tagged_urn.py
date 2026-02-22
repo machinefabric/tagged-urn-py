@@ -1079,17 +1079,17 @@ def test_578_equivalent_identical_tags():
 
 # TEST579: Non-equivalent URNs where one is more specific
 def test_579_not_equivalent_when_one_more_specific():
-    general = TaggedUrn.from_string("media:bytes")
-    specific = TaggedUrn.from_string("media:pdf;bytes")
+    general = TaggedUrn.from_string("media:")
+    specific = TaggedUrn.from_string("media:pdf")
     assert not general.is_equivalent(specific)
     assert not specific.is_equivalent(general)
 
 
 # TEST580: Comparable URNs on the same specialization chain
 def test_580_comparable_specialization_chain():
-    general = TaggedUrn.from_string("media:bytes")
-    specific = TaggedUrn.from_string("media:pdf;bytes")
-    # general.accepts(specific) = True (bytes ⊆ pdf;bytes)
+    general = TaggedUrn.from_string("media:")
+    specific = TaggedUrn.from_string("media:pdf")
+    # general.accepts(specific) = True (wildcard ⊆ pdf)
     # specific.accepts(general) = False (pdf missing from general)
     # OR → True
     assert general.is_comparable(specific)
@@ -1098,7 +1098,7 @@ def test_580_comparable_specialization_chain():
 
 # TEST581: Incomparable URNs in different branches of the lattice
 def test_581_incomparable_different_branches():
-    pdf = TaggedUrn.from_string("media:pdf;bytes")
+    pdf = TaggedUrn.from_string("media:pdf")
     txt = TaggedUrn.from_string("media:txt;textable")
     # pdf.accepts(txt) = False (pdf missing from txt)
     # txt.accepts(pdf) = False (txt missing from pdf)
@@ -1125,7 +1125,7 @@ def test_582_equivalent_implies_comparable():
 # TEST583: Prefix mismatch raises error for both relations
 def test_583_prefix_mismatch_errors():
     cap = TaggedUrn.from_string("cap:op=test")
-    media = TaggedUrn.from_string("media:bytes")
+    media = TaggedUrn.from_string("media:")
     with pytest.raises(TaggedUrnError):
         cap.is_equivalent(media)
     with pytest.raises(TaggedUrnError):
@@ -1135,7 +1135,7 @@ def test_583_prefix_mismatch_errors():
 # TEST584: Empty tag set is comparable to everything with same prefix
 def test_584_empty_tags_comparable_to_all():
     empty = TaggedUrn.from_string("media:")
-    specific = TaggedUrn.from_string("media:pdf;bytes;thumbnail")
+    specific = TaggedUrn.from_string("media:pdf;thumbnail")
     # empty.accepts(specific) = True (empty has no constraints)
     assert empty.is_comparable(specific)
     # but NOT equivalent (specific has tags empty doesn't)
@@ -1147,10 +1147,10 @@ def test_584_empty_tags_comparable_to_all():
 
 # TEST585: String variants of is_equivalent and is_comparable
 def test_585_string_variants():
-    urn = TaggedUrn.from_string("media:pdf;bytes")
-    assert urn.is_equivalent_str("media:bytes;pdf")  # same tags
-    assert not urn.is_equivalent_str("media:bytes")  # different
-    assert urn.is_comparable_str("media:bytes")  # on same chain
+    urn = TaggedUrn.from_string("media:pdf")
+    assert urn.is_equivalent_str("media:pdf")  # same tags
+    assert not urn.is_equivalent_str("media:")  # different
+    assert urn.is_comparable_str("media:")  # on same chain
     assert not urn.is_comparable_str("media:txt;textable")  # different branch
 
 
