@@ -567,6 +567,58 @@ class TaggedUrn:
 
         return self.specificity() > other.specificity()
 
+    def is_equivalent(self, other: 'TaggedUrn') -> bool:
+        """Check if two URNs are equivalent (identical tag sets).
+
+        From order theory: in the specialization partial order defined by
+        `accepts`/`conforms_to`, two elements are **equivalent** when each
+        accepts the other (antisymmetry: a ≤ b ∧ b ≤ a → a = b).
+
+        This is stricter than `is_comparable` — it requires the tag sets to
+        be identical, not just related by specialization.
+
+        ```
+        a.is_equivalent(b)  ≡  a.accepts(b) && b.accepts(a)
+        ```
+
+        Raises `PrefixMismatchError` if prefixes differ (inherited from
+        `accepts`/`conforms_to` — both sides return false on mismatch, but
+        since we AND them, the error propagates).
+        """
+        return self.accepts(other) and other.accepts(self)
+
+    def is_comparable(self, other: 'TaggedUrn') -> bool:
+        """Check if two URNs are comparable (one is a specialization of the other).
+
+        From order theory: in a partial order, two elements are **comparable**
+        when one is ≤ the other. Elements that are NOT comparable are in
+        different branches of the specialization lattice (e.g., `media:pdf;bytes`
+        vs `media:txt;textable` — neither accepts the other).
+
+        This is the weakest relation: it finds all URNs on the same
+        generalization/specialization chain. Use it when you want to discover
+        all handlers that *could* service a request, whether they are more
+        general (fallback) or more specific (exact match).
+
+        ```
+        a.is_comparable(b)  ≡  a.accepts(b) || b.accepts(a)
+        ```
+
+        Raises `PrefixMismatchError` if prefixes differ (inherited from
+        `accepts`/`conforms_to`).
+        """
+        return self.accepts(other) or other.accepts(self)
+
+    def is_equivalent_str(self, other_str: str) -> bool:
+        """String variant of `is_equivalent`."""
+        other = TaggedUrn.from_string(other_str)
+        return self.is_equivalent(other)
+
+    def is_comparable_str(self, other_str: str) -> bool:
+        """String variant of `is_comparable`."""
+        other = TaggedUrn.from_string(other_str)
+        return self.is_comparable(other)
+
     def with_wildcard_tag(self, key: str) -> 'TaggedUrn':
         """Create a wildcard version by replacing specific values with wildcards"""
         if key in self.tags:

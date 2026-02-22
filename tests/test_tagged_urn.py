@@ -1063,3 +1063,265 @@ def test_specificity_with_special_values():
     assert must_not.specificity_tuple() == (0, 0, 3)
     assert unspecified.specificity_tuple() == (0, 0, 0)
     assert mixed.specificity_tuple() == (1, 1, 1)
+
+
+# =========================================================================
+# ORDER-THEORETIC RELATIONS: is_equivalent, is_comparable
+# =========================================================================
+
+# TEST578: Equivalent URNs with identical tag sets
+def test_578_equivalent_identical_tags():
+    a = TaggedUrn.from_string("cap:op=generate;ext=pdf")
+    b = TaggedUrn.from_string("cap:ext=pdf;op=generate")  # same tags, different order
+    assert a.is_equivalent(b)
+    assert b.is_equivalent(a)  # symmetric
+
+
+# TEST579: Non-equivalent URNs where one is more specific
+def test_579_not_equivalent_when_one_more_specific():
+    general = TaggedUrn.from_string("media:bytes")
+    specific = TaggedUrn.from_string("media:pdf;bytes")
+    assert not general.is_equivalent(specific)
+    assert not specific.is_equivalent(general)
+
+
+# TEST580: Comparable URNs on the same specialization chain
+def test_580_comparable_specialization_chain():
+    general = TaggedUrn.from_string("media:bytes")
+    specific = TaggedUrn.from_string("media:pdf;bytes")
+    # general.accepts(specific) = True (bytes ⊆ pdf;bytes)
+    # specific.accepts(general) = False (pdf missing from general)
+    # OR → True
+    assert general.is_comparable(specific)
+    assert specific.is_comparable(general)  # symmetric
+
+
+# TEST581: Incomparable URNs in different branches of the lattice
+def test_581_incomparable_different_branches():
+    pdf = TaggedUrn.from_string("media:pdf;bytes")
+    txt = TaggedUrn.from_string("media:txt;textable")
+    # pdf.accepts(txt) = False (pdf missing from txt)
+    # txt.accepts(pdf) = False (txt missing from pdf)
+    # OR → False
+    assert not pdf.is_comparable(txt)
+    assert not txt.is_comparable(pdf)
+
+
+# TEST582: Equivalent implies comparable but not vice versa
+def test_582_equivalent_implies_comparable():
+    a = TaggedUrn.from_string("cap:op=test;ext=pdf")
+    b = TaggedUrn.from_string("cap:op=test;ext=pdf")
+    # equivalent → comparable (AND implies OR)
+    assert a.is_equivalent(b)
+    assert a.is_comparable(b)
+
+    # comparable but NOT equivalent
+    general = TaggedUrn.from_string("cap:op=test")
+    specific = TaggedUrn.from_string("cap:op=test;ext=pdf")
+    assert not general.is_equivalent(specific)
+    assert general.is_comparable(specific)
+
+
+# TEST583: Prefix mismatch raises error for both relations
+def test_583_prefix_mismatch_errors():
+    cap = TaggedUrn.from_string("cap:op=test")
+    media = TaggedUrn.from_string("media:bytes")
+    with pytest.raises(TaggedUrnError):
+        cap.is_equivalent(media)
+    with pytest.raises(TaggedUrnError):
+        cap.is_comparable(media)
+
+
+# TEST584: Empty tag set is comparable to everything with same prefix
+def test_584_empty_tags_comparable_to_all():
+    empty = TaggedUrn.from_string("media:")
+    specific = TaggedUrn.from_string("media:pdf;bytes;thumbnail")
+    # empty.accepts(specific) = True (empty has no constraints)
+    assert empty.is_comparable(specific)
+    # but NOT equivalent (specific has tags empty doesn't)
+    assert not empty.is_equivalent(specific)
+    # empty is equivalent to itself
+    empty2 = TaggedUrn.from_string("media:")
+    assert empty.is_equivalent(empty2)
+
+
+# TEST585: String variants of is_equivalent and is_comparable
+def test_585_string_variants():
+    urn = TaggedUrn.from_string("media:pdf;bytes")
+    assert urn.is_equivalent_str("media:bytes;pdf")  # same tags
+    assert not urn.is_equivalent_str("media:bytes")  # different
+    assert urn.is_comparable_str("media:bytes")  # on same chain
+    assert not urn.is_comparable_str("media:txt;textable")  # different branch
+
+
+# TEST586: Special values (*, !, ?) with is_equivalent and is_comparable
+def test_586_special_values():
+    must_have = TaggedUrn.from_string("cap:ext")  # ext=*
+    exact = TaggedUrn.from_string("cap:ext=pdf")  # ext=pdf
+    must_not = TaggedUrn.from_string("cap:ext=!")  # ext=!
+    unspecified = TaggedUrn.from_string("cap:ext=?")  # ext=?
+
+    # must_have (*) and exact (pdf): equivalent — * accepts any value
+    # bidirectionally (instance * is fine with pattern pdf, pattern * accepts instance pdf)
+    assert must_have.is_equivalent(exact)
+    assert must_have.is_comparable(exact)
+
+    # must_not (!) and exact (pdf): incomparable (conflict both directions)
+    assert not must_not.is_comparable(exact)
+    assert not must_not.is_equivalent(exact)
+
+    # must_not (!) and must_have (*): incomparable (conflict both directions)
+    assert not must_not.is_comparable(must_have)
+    assert not must_not.is_equivalent(must_have)
+
+    # unspecified (?) is equivalent to everything — ? matches anything
+    assert unspecified.is_equivalent(exact)
+    assert unspecified.is_equivalent(must_have)
+    assert unspecified.is_equivalent(must_not)
+
+
+# =========================================================================
+# BUILDER TESTS (mirroring Rust implementation)
+# =========================================================================
+
+# TEST587: Builder fluent API for tag manipulation
+def test_587_builder_fluent_api():
+    urn = (TaggedUrnBuilder("cap")
+           .tag("op", "generate")
+           .tag("target", "thumbnail")
+           .tag("format", "pdf")
+           .tag("output", "binary")
+           .build())
+
+    assert urn.get_tag("op") == "generate"
+    assert urn.get_tag("target") == "thumbnail"
+    assert urn.get_tag("format") == "pdf"
+    assert urn.get_tag("output") == "binary"
+
+
+# TEST588: Builder with custom tags
+def test_588_builder_custom_tags():
+    urn = (TaggedUrnBuilder("cap")
+           .tag("engine", "v2")
+           .tag("quality", "high")
+           .tag("op", "compress")
+           .build())
+
+    assert urn.get_tag("engine") == "v2"
+    assert urn.get_tag("quality") == "high"
+    assert urn.get_tag("op") == "compress"
+
+
+# TEST589: Builder tag overrides (last value wins)
+def test_589_builder_tag_overrides():
+    urn = (TaggedUrnBuilder("cap")
+           .tag("op", "convert")
+           .tag("format", "jpg")
+           .build())
+
+    assert urn.get_tag("op") == "convert"
+    assert urn.get_tag("format") == "jpg"
+
+
+# TEST590: Builder empty build raises error (tags required)
+def test_590_builder_empty_build():
+    # Empty builder raises error - tags are required
+    with pytest.raises(TaggedUrnError):
+        TaggedUrnBuilder("cap").build()
+
+
+# TEST591: Builder with single tag
+def test_591_builder_single_tag():
+    urn = TaggedUrnBuilder("cap").tag("type", "utility").build()
+
+    assert str(urn) == "cap:type=utility"
+    assert urn.get_tag("type") == "utility"
+    # NEW GRADED SPECIFICITY: exact value = 3 points
+    assert urn.specificity() == 3
+
+
+# TEST592: Builder with complex multi-tag URN
+def test_592_builder_complex():
+    urn = (TaggedUrnBuilder("cap")
+           .tag("type", "media")
+           .tag("op", "transcode")
+           .tag("target", "video")
+           .tag("format", "mp4")
+           .tag("codec", "h264")
+           .tag("quality", "1080p")
+           .tag("framerate", "30fps")
+           .tag("output", "binary")
+           .build())
+
+    assert urn.get_tag("type") == "media"
+    assert urn.get_tag("op") == "transcode"
+    assert urn.get_tag("target") == "video"
+    assert urn.get_tag("format") == "mp4"
+    assert urn.get_tag("codec") == "h264"
+    assert urn.get_tag("quality") == "1080p"
+    assert urn.get_tag("framerate") == "30fps"
+    assert urn.get_tag("output") == "binary"
+
+    # NEW GRADED SPECIFICITY: 8 exact values × 3 points each = 24
+    assert urn.specificity() == 24
+
+
+# TEST593: Builder with wildcards
+def test_593_builder_wildcards():
+    urn = (TaggedUrnBuilder("cap")
+           .tag("op", "convert")
+           .solo_tag("ext")  # Wildcard
+           .solo_tag("quality")  # Wildcard
+           .build())
+
+    # Wildcards serialize as value-less
+    assert str(urn) == "cap:ext;op=convert;quality"
+    # NEW GRADED SPECIFICITY: op=convert (exact) = 3, ext=* = 2, quality=* = 2
+    # Total = 3 + 2 + 2 = 7
+    assert urn.specificity() == 7
+
+    assert urn.get_tag("ext") == "*"
+    assert urn.get_tag("quality") == "*"
+
+
+# TEST594: Builder with custom prefix
+def test_594_builder_custom_prefix():
+    urn = TaggedUrnBuilder("myapp").tag("key", "value").build()
+
+    assert urn.prefix == "myapp"
+    assert str(urn) == "myapp:key=value"
+
+
+# TEST595: Builder matching with built URN
+def test_595_builder_matching_with_built_urn():
+    # Create a specific instance
+    specific_instance = (TaggedUrnBuilder("cap")
+                         .tag("op", "generate")
+                         .tag("target", "thumbnail")
+                         .tag("format", "pdf")
+                         .build())
+
+    # Create a more general pattern (fewer constraints)
+    general_pattern = TaggedUrnBuilder("cap").tag("op", "generate").build()
+
+    # Create a pattern with wildcard (ext=* means must-have-any)
+    wildcard_pattern = (TaggedUrnBuilder("cap")
+                        .tag("op", "generate")
+                        .tag("target", "thumbnail")
+                        .solo_tag("ext")
+                        .build())
+
+    # Specific instance should match general pattern (pattern has fewer constraints)
+    assert specific_instance.conforms_to(general_pattern)
+
+    # NEW SEMANTICS: wildcardPattern has ext=* which means instance MUST have ext
+    # specificInstance doesn't have ext, so this should NOT match
+    assert not specific_instance.conforms_to(wildcard_pattern)
+
+    # Check specificity
+    assert specific_instance.is_more_specific_than(general_pattern)
+
+    # NEW GRADED SPECIFICITY: exact value = 3 points, * = 2 points
+    assert specific_instance.specificity() == 9  # 3 exact values × 3 = 9
+    assert general_pattern.specificity() == 3  # 1 exact value × 3 = 3
+    assert wildcard_pattern.specificity() == 8  # 2 exact × 3 + 1 * × 2 = 6 + 2 = 8
