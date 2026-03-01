@@ -2,7 +2,7 @@
 
 Python implementation of the Tagged URN system - a flat tag-based identifier system.
 
-This is a port of the reference Rust implementation [tagged-urn-rs](https://github.com/filegrind/tagged-urn-rs).
+This is a port of the reference Rust implementation [tagged-urn-rs](https://github.com/machinefabric/tagged-urn-rs).
 
 ## Overview
 
