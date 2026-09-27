@@ -1,20 +1,22 @@
+# The package builds the program generated from the proved model in ../formal (src/tagged_urn/_formal,
+# see ../lungo.toml) with CMake, on lungo-py — at exactly the lungo release that generated it.
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.10", "lungo-py==0.27.1270"]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "tagged-urn"
-version = "1.32.52"
+version = "1.33.54"
 description = "Tagged URN - Flat tag-based identifier system"
 authors = [{name = "https://github.com/machinefabric"}]
 license = {text = "MIT"}
-requires-python = ">=3.8"
+requires-python = ">=3.9"
+dependencies = ["lungo-py==0.27.1270"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -27,8 +29,9 @@ dev = [
     "pytest-cov>=4.0.0",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+wheel.packages = ["src/tagged_urn"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

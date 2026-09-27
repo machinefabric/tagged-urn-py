@@ -2,10 +2,34 @@
 
 This module provides a flat, tag-based tagged URN system with configurable
 prefixes, wildcard support, and specificity comparison.
+
+What two URNs mean to each other — refinement, equivalence, comparability,
+specificity, one key's match — is decided by code generated from the proved
+model in ../formal (Lean) by lungo, in the module ``_formal``, not written here.
 """
 
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
+from types import MappingProxyType
+from typing import Dict, List, Mapping, Optional, Tuple
+
+from . import _formal
+
+
+def _constraint_of(value: Optional[str]) -> _formal.Constraint:
+    """The model's form of a stored tag value (None is a key the URN omits)."""
+    if value is None:
+        return _formal.ConstraintMissing()
+    if value == "?":
+        return _formal.ConstraintUnconstrained()
+    if value == "*":
+        return _formal.ConstraintPresent()
+    if value == "!":
+        return _formal.ConstraintAbsent()
+    if value.startswith("?="):
+        return _formal.ConstraintOptionalNot(value[2:])
+    if value.startswith("!="):
+        return _formal.ConstraintPresentNot(value[2:])
+    return _formal.ConstraintExact(value)
 
 
 def score_tag_value(value: str) -> int:
@@ -180,8 +204,29 @@ class TaggedUrn:
 
         Keys are normalized to lowercase; values are preserved as-is
         """
-        self.prefix = prefix.lower()
-        self.tags = {k.lower(): v for k, v in tags.items()}
+        self._prefix = prefix.lower()
+        self._tags = {k.lower(): v for k, v in tags.items()}
+        # The same URN on the proved model's side: its tags with the proof that
+        # their keys are strictly increasing. Every semantic question is asked
+        # of it. Made here from the same tags as the fields, which are read-only
+        # from here on, so the two cannot describe different URNs. Python orders
+        # strings by code point, as Lean's String < does, so the model refusing
+        # the sorted keys is a broken invariant.
+        keys = sorted(self._tags)
+        formal = _formal.make(self._prefix, [(k, _constraint_of(self._tags[k])) for k in keys])
+        if formal is None:
+            raise RuntimeError(f"tagged-urn: the model refused {self._prefix}:{keys}, whose keys are sorted")
+        self._formal = formal
+
+    @property
+    def prefix(self) -> str:
+        """The prefix (``media``, ``cap``, …)."""
+        return self._prefix
+
+    @property
+    def tags(self) -> Mapping[str, str]:
+        """The tags, as stored values (``*``, ``?``, ``!``, ``?=v``, ``!=v``, or an exact value), read-only."""
+        return MappingProxyType(self._tags)
 
     @classmethod
     def empty(cls, prefix: str) -> 'TaggedUrn':
@@ -584,7 +629,7 @@ class TaggedUrn:
         IMPORTANT: Both URNs must have the same prefix. Comparing URNs with
         different prefixes is a programming error and will raise an error.
         """
-        return self._check_match(self.tags, self.prefix, pattern.tags, pattern.prefix)
+        return self._check_match(self, pattern)
 
     def accepts(self, instance: 'TaggedUrn') -> bool:
         """Check if this URN (pattern) accepts the given instance.
@@ -594,28 +639,25 @@ class TaggedUrn:
         IMPORTANT: Both URNs must have the same prefix. Comparing URNs with
         different prefixes is a programming error and will raise an error.
         """
-        return self._check_match(instance.tags, instance.prefix, self.tags, self.prefix)
+        return self._check_match(instance, self)
 
     @staticmethod
-    def _check_match(instance_tags: dict, instance_prefix: str,
-                     pattern_tags: dict, pattern_prefix: str) -> bool:
-        """Core matching: does instance satisfy pattern's constraints?"""
-        if instance_prefix != pattern_prefix:
-            raise PrefixMismatchError(instance_prefix, pattern_prefix)
+    def _check_match(instance: 'TaggedUrn', pattern: 'TaggedUrn') -> bool:
+        """Core matching: does instance satisfy pattern's constraints?
 
-        all_keys: Set[str] = set(instance_tags.keys()) | set(pattern_tags.keys())
+        Decided by the model (``refines``, proved to be refinement); only the
+        prefix check is here, because comparing across prefixes is a caller's
+        error and says so.
+        """
+        TaggedUrn._same_prefix(instance, pattern)
+        return _formal.refines(instance._formal, pattern._formal)
 
-        for key in all_keys:
-            inst = instance_tags.get(key)
-            patt = pattern_tags.get(key)
+    @staticmethod
+    def _same_prefix(a: 'TaggedUrn', b: 'TaggedUrn') -> None:
+        if a.prefix != b.prefix:
+            raise PrefixMismatchError(a.prefix, b.prefix)
 
-            if not TaggedUrn._values_match(inst, patt):
-                return False
-
-        return True
-
-    # Form classification — used by _values_match and the
-    # specificity scorer.
+    # Form classification — used by the specificity tuple.
     _FORM_MISSING = 0
     _FORM_NO_CONSTRAINT = 1   # "?"
     _FORM_ABSENT_OR_NOT_VALUE = 2  # "?=v"
@@ -647,51 +689,14 @@ class TaggedUrn:
 
     @staticmethod
     def _values_match(inst: Optional[str], patt: Optional[str]) -> bool:
-        """Whether an instance value satisfies a pattern constraint at one key.
+        """Whether an instance value satisfies a pattern constraint at one key
+        (None for a key the URN omits), as the model decides it.
 
-        Every form has ONE meaning — the set of states the key may be in
-        (absent, or present with some value) — and the same meaning on either
-        side: the instance satisfies the pattern when every state it allows,
-        the pattern allows too. This is the rule proved in tagged-urn's
-        ``formal/`` (``tagMatch_iff_allows``), which is what makes refinement
-        transitive and equivalence mean "the same tag set".
-
-        The table this replaces gave some forms two meanings — a missing key
-        was "anything" as a pattern and "absent" as an instance, and an
-        instance-side ``x`` or ``?x`` was "whatever the pattern wants". The
-        change only removes matches.
+        Every form has ONE meaning — the set of states the key may be in — and
+        the instance satisfies the pattern when every state it allows, the
+        pattern allows too (``tagMatch_iff_allows`` in ``formal/``).
         """
-        i_kind, i_val = TaggedUrn._classify_form(inst)
-        p_kind, p_val = TaggedUrn._classify_form(patt)
-
-        # A pattern that constrains nothing accepts every instance.
-        if p_kind in (TaggedUrn._FORM_MISSING, TaggedUrn._FORM_NO_CONSTRAINT):
-            return True
-
-        # An instance that constrains nothing promises nothing.
-        if i_kind in (TaggedUrn._FORM_MISSING, TaggedUrn._FORM_NO_CONSTRAINT):
-            return False
-        if i_kind == TaggedUrn._FORM_MUST_NOT_HAVE:
-            return p_kind in (TaggedUrn._FORM_MUST_NOT_HAVE, TaggedUrn._FORM_ABSENT_OR_NOT_VALUE)
-        if i_kind == TaggedUrn._FORM_ABSENT_OR_NOT_VALUE:
-            return p_kind == TaggedUrn._FORM_ABSENT_OR_NOT_VALUE and i_val == p_val
-        if i_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
-            # Present with SOME value: not a promise of any particular one.
-            return p_kind == TaggedUrn._FORM_MUST_HAVE_ANY
-        if i_kind == TaggedUrn._FORM_PRESENT_NOT_VALUE:
-            if p_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
-                return True
-            if p_kind in (TaggedUrn._FORM_PRESENT_NOT_VALUE, TaggedUrn._FORM_ABSENT_OR_NOT_VALUE):
-                return i_val == p_val
-            return False
-        # i_kind == _FORM_EXACT
-        if p_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
-            return True
-        if p_kind == TaggedUrn._FORM_EXACT:
-            return i_val == p_val
-        if p_kind in (TaggedUrn._FORM_PRESENT_NOT_VALUE, TaggedUrn._FORM_ABSENT_OR_NOT_VALUE):
-            return i_val != p_val
-        return False
+        return _formal.values_match(_constraint_of(inst), _constraint_of(patt))
 
     def conforms_to_str(self, pattern_str: str) -> bool:
         """Check if this URN (instance) satisfies a string pattern's constraints."""
@@ -704,12 +709,12 @@ class TaggedUrn:
         return self.accepts(instance)
 
     def specificity(self) -> int:
-        """Calculate specificity score for URN matching.
+        """Calculate specificity score for URN matching, as the model computes it.
 
         Sum of the per-tag truth-table score across every tag. See
         :func:`score_tag_value` for the per-tag ladder.
         """
-        return sum(score_tag_value(v) for v in self.tags.values())
+        return _formal.specificity(self._formal)
 
     def specificity_tuple(self) -> Tuple[int, int, int, int, int]:
         """Get specificity as a tuple for tie-breaking.
@@ -765,11 +770,11 @@ class TaggedUrn:
         a.is_equivalent(b)  ≡  a.accepts(b) && b.accepts(a)
         ```
 
-        Raises `PrefixMismatchError` if prefixes differ (inherited from
-        `accepts`/`conforms_to` — both sides return false on mismatch, but
-        since we AND them, the error propagates).
+        Decided by the model (``equivalent``, proved equal to it). Raises
+        `PrefixMismatchError` if prefixes differ.
         """
-        return self.accepts(other) and other.accepts(self)
+        TaggedUrn._same_prefix(self, other)
+        return _formal.equivalent(self._formal, other._formal)
 
     def is_comparable(self, other: 'TaggedUrn') -> bool:
         """Check if two URNs are comparable (one is a specialization of the other).
@@ -788,10 +793,11 @@ class TaggedUrn:
         a.is_comparable(b)  ≡  a.accepts(b) || b.accepts(a)
         ```
 
-        Raises `PrefixMismatchError` if prefixes differ (inherited from
-        `accepts`/`conforms_to`).
+        Decided by the model (``comparable``, proved equal to it). Raises
+        `PrefixMismatchError` if prefixes differ.
         """
-        return self.accepts(other) or other.accepts(self)
+        TaggedUrn._same_prefix(self, other)
+        return _formal.comparable(self._formal, other._formal)
 
     def is_equivalent_str(self, other_str: str) -> bool:
         """String variant of `is_equivalent`."""
