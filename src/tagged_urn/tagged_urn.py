@@ -647,75 +647,51 @@ class TaggedUrn:
 
     @staticmethod
     def _values_match(inst: Optional[str], patt: Optional[str]) -> bool:
-        """Check if instance value matches pattern constraint, per
-        the truth table over the six canonical forms (plus Missing).
+        """Whether an instance value satisfies a pattern constraint at one key.
 
-        See the canonical-form table in ``ParseState`` for the
-        encoding; see capdag/docs/04-PREDICATES.md §2.5 for the full
-        cross-product.
+        Every form has ONE meaning — the set of states the key may be in
+        (absent, or present with some value) — and the same meaning on either
+        side: the instance satisfies the pattern when every state it allows,
+        the pattern allows too. This is the rule proved in tagged-urn's
+        ``formal/`` (``tagMatch_iff_allows``), which is what makes refinement
+        transitive and equivalence mean "the same tag set".
+
+        The table this replaces gave some forms two meanings — a missing key
+        was "anything" as a pattern and "absent" as an instance, and an
+        instance-side ``x`` or ``?x`` was "whatever the pattern wants". The
+        change only removes matches.
         """
         i_kind, i_val = TaggedUrn._classify_form(inst)
         p_kind, p_val = TaggedUrn._classify_form(patt)
 
-        # Pattern unconditionally permissive.
+        # A pattern that constrains nothing accepts every instance.
         if p_kind in (TaggedUrn._FORM_MISSING, TaggedUrn._FORM_NO_CONSTRAINT):
             return True
 
-        # Instance unconditionally permissive.
-        if i_kind == TaggedUrn._FORM_NO_CONSTRAINT:
-            return True
-
-        if p_kind == TaggedUrn._FORM_MUST_NOT_HAVE:
-            return i_kind in (
-                TaggedUrn._FORM_MISSING,
-                TaggedUrn._FORM_MUST_NOT_HAVE,
-                TaggedUrn._FORM_ABSENT_OR_NOT_VALUE,
-            )
-
-        if p_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
-            return i_kind not in (
-                TaggedUrn._FORM_MISSING,
-                TaggedUrn._FORM_ABSENT_OR_NOT_VALUE,
-                TaggedUrn._FORM_MUST_NOT_HAVE,
-            )
-
-        if p_kind == TaggedUrn._FORM_PRESENT_NOT_VALUE:
-            if i_kind in (
-                TaggedUrn._FORM_MISSING,
-                TaggedUrn._FORM_ABSENT_OR_NOT_VALUE,
-                TaggedUrn._FORM_MUST_NOT_HAVE,
-            ):
-                return False
-            if i_kind in (TaggedUrn._FORM_MUST_HAVE_ANY, TaggedUrn._FORM_PRESENT_NOT_VALUE):
-                return True  # defer
-            # Exact instance: pat requires not p_val, inst is i_val
-            return i_val != p_val
-
-        if p_kind == TaggedUrn._FORM_ABSENT_OR_NOT_VALUE:
-            if i_kind in (
-                TaggedUrn._FORM_MISSING,
-                TaggedUrn._FORM_ABSENT_OR_NOT_VALUE,
-                TaggedUrn._FORM_MUST_NOT_HAVE,
-            ):
-                return True
-            if i_kind in (TaggedUrn._FORM_MUST_HAVE_ANY, TaggedUrn._FORM_PRESENT_NOT_VALUE):
-                return True  # defer
-            # Exact instance vs pattern's "absent or not p"
-            return i_val != p_val
-
-        # p_kind == _FORM_EXACT
-        if i_kind in (
-            TaggedUrn._FORM_MISSING,
-            TaggedUrn._FORM_ABSENT_OR_NOT_VALUE,
-            TaggedUrn._FORM_MUST_NOT_HAVE,
-        ):
+        # An instance that constrains nothing promises nothing.
+        if i_kind in (TaggedUrn._FORM_MISSING, TaggedUrn._FORM_NO_CONSTRAINT):
             return False
+        if i_kind == TaggedUrn._FORM_MUST_NOT_HAVE:
+            return p_kind in (TaggedUrn._FORM_MUST_NOT_HAVE, TaggedUrn._FORM_ABSENT_OR_NOT_VALUE)
+        if i_kind == TaggedUrn._FORM_ABSENT_OR_NOT_VALUE:
+            return p_kind == TaggedUrn._FORM_ABSENT_OR_NOT_VALUE and i_val == p_val
         if i_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
-            return True  # defer
+            # Present with SOME value: not a promise of any particular one.
+            return p_kind == TaggedUrn._FORM_MUST_HAVE_ANY
         if i_kind == TaggedUrn._FORM_PRESENT_NOT_VALUE:
+            if p_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
+                return True
+            if p_kind in (TaggedUrn._FORM_PRESENT_NOT_VALUE, TaggedUrn._FORM_ABSENT_OR_NOT_VALUE):
+                return i_val == p_val
+            return False
+        # i_kind == _FORM_EXACT
+        if p_kind == TaggedUrn._FORM_MUST_HAVE_ANY:
+            return True
+        if p_kind == TaggedUrn._FORM_EXACT:
+            return i_val == p_val
+        if p_kind in (TaggedUrn._FORM_PRESENT_NOT_VALUE, TaggedUrn._FORM_ABSENT_OR_NOT_VALUE):
             return i_val != p_val
-        # Exact vs Exact
-        return i_val == p_val
+        return False
 
     def conforms_to_str(self, pattern_str: str) -> bool:
         """Check if this URN (instance) satisfies a string pattern's constraints."""

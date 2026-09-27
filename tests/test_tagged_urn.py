@@ -626,13 +626,12 @@ def test_0046_matching_semantics_test4_request_has_wildcard():
 
 # TEST0047: Matching semantics test5 urn has wildcard
 def test_0047_matching_semantics_test5_urn_has_wildcard():
-    # Test 5: URN has wildcard
-    # URN:     cap:generate;ext=*
-    # Request: cap:generate;ext=pdf
-    # Result:  MATCH (URN handles any ext)
+    # An instance's wildcard promises presence, not the value asked for:
+    # "some ext" does not satisfy ext=pdf, and a pdf satisfies "some ext".
     urn = TaggedUrn.from_string("cap:generate;ext=*")
     request = TaggedUrn.from_string("cap:generate;ext=pdf")
-    assert urn.conforms_to(request), "Test 5: URN wildcard should match"
+    assert not urn.conforms_to(request), "some ext does not satisfy ext=pdf"
+    assert request.conforms_to(urn), "ext=pdf satisfies some ext"
 
 
 # TEST0048: Matching semantics test6 value mismatch
@@ -774,16 +773,19 @@ def test_0057_valueless_tag_equivalence_to_wildcard():
 
 # TEST0058: Valueless tag matching
 def test_0058_valueless_tag_matching():
-    # Value-less tag (wildcard) matches any value
+    # A valueless tag promises presence, not a value. Reading `ext` as
+    # "whatever the pattern wants" made `ext` and `ext=pdf` equivalent and
+    # refinement non-transitive; refinement is inclusion of what each form
+    # allows (tagged-urn formal, `tagMatch_iff_allows`).
     urn = TaggedUrn.from_string("cap:generate;ext")
 
     request_pdf = TaggedUrn.from_string("cap:generate;ext=pdf")
     request_docx = TaggedUrn.from_string("cap:generate;ext=docx")
-    request_any = TaggedUrn.from_string("cap:generate;ext=anything")
 
-    assert urn.conforms_to(request_pdf)
-    assert urn.conforms_to(request_docx)
-    assert urn.conforms_to(request_any)
+    assert not urn.conforms_to(request_pdf), "some ext is not a promise of pdf"
+    assert not urn.conforms_to(request_docx), "some ext is not a promise of docx"
+    assert request_pdf.conforms_to(urn), "a pdf is some ext"
+    assert not urn.is_equivalent(request_pdf), "ext and ext=pdf are different tag sets"
 
 
 # TEST0059: Valueless tag in pattern
@@ -857,9 +859,9 @@ def test_0064_valueless_tag_compatibility():
     # Wildcard pattern accepts specific instances
     assert urn_wildcard.accepts(urn_pdf)
     assert urn_wildcard.accepts(urn_docx)
-    # Specific instances also accept wildcard (instance * matches pattern's exact value)
-    assert urn_pdf.accepts(urn_wildcard)
-    assert urn_docx.accepts(urn_wildcard)
+    # A specific pattern does NOT accept the wildcard: "some ext" is not a pdf.
+    assert not urn_pdf.accepts(urn_wildcard)
+    assert not urn_docx.accepts(urn_wildcard)
     # Different specific values: neither accepts the other
     assert not urn_pdf.accepts(urn_docx)
     assert not urn_docx.accepts(urn_pdf)
@@ -939,7 +941,9 @@ def test_0069_question_mark_pattern_matches_anything():
 
 # TEST0070: Question mark in instance
 def test_0070_question_mark_in_instance():
-    # Instance with K=? matches any pattern constraint
+    # An instance with K=? promises nothing about K, so it satisfies exactly
+    # the patterns that ask for nothing. Satisfying every pattern made
+    # refinement non-transitive: missing ⪯ ?k ⪯ k=v, yet missing ⋠ k=v.
     instance = TaggedUrn.from_string("cap:ext=?")
 
     pattern_pdf = TaggedUrn.from_string("cap:ext=pdf")
@@ -948,16 +952,17 @@ def test_0070_question_mark_in_instance():
     pattern_question = TaggedUrn.from_string("cap:ext=?")
     pattern_missing = TaggedUrn.from_string("cap:")
 
-    assert instance.conforms_to(pattern_pdf), "ext=? should match ext=pdf"
-    assert instance.conforms_to(pattern_wildcard), "ext=? should match ext=*"
-    assert instance.conforms_to(pattern_must_not), "ext=? should match ext=!"
+    assert not instance.conforms_to(pattern_pdf), "ext=? promises no pdf"
+    assert not instance.conforms_to(pattern_wildcard), "ext=? promises no presence"
+    assert not instance.conforms_to(pattern_must_not), "ext=? promises no absence"
     assert instance.conforms_to(pattern_question), "ext=? should match ext=?"
     assert instance.conforms_to(pattern_missing), "ext=? should match (no ext)"
 
 
 # TEST0071: Must not have pattern requires absent
 def test_0071_must_not_have_pattern_requires_absent():
-    # Pattern with K=! requires instance to NOT have K
+    # Pattern with K=! requires the instance to SAY K is absent: a key an
+    # instance does not mention is not a promise that it is absent.
     pattern = TaggedUrn.from_string("cap:ext=!")
 
     instance_missing = TaggedUrn.from_string("cap:")
@@ -965,7 +970,7 @@ def test_0071_must_not_have_pattern_requires_absent():
     instance_wildcard = TaggedUrn.from_string("cap:ext=*")
     instance_must_not = TaggedUrn.from_string("cap:ext=!")
 
-    assert instance_missing.conforms_to(pattern), "(no ext) should match ext=!"
+    assert not instance_missing.conforms_to(pattern), "(no ext) does not promise ext is absent"
     assert not instance_pdf.conforms_to(pattern), "ext=pdf should NOT match ext=!"
     assert not instance_wildcard.conforms_to(pattern), "ext=* should NOT match ext=!"
     assert instance_must_not.conforms_to(pattern), "ext=! should match ext=!"
@@ -1003,16 +1008,16 @@ def test_0073_full_cross_product_matching():
     # Instance missing, Pattern variations
     check("cap:", "cap:", True, "(none)/(none)")
     check("cap:", "cap:k=?", True, "(none)/K=?")
-    check("cap:", "cap:k=!", True, "(none)/K=!")
+    check("cap:", "cap:k=!", False, "(none)/K=!")
     check("cap:", "cap:k", False, "(none)/K=*")  # K is valueless = *
     check("cap:", "cap:k=v", False, "(none)/K=v")
 
     # Instance K=?, Pattern variations
     check("cap:k=?", "cap:", True, "K=?/(none)")
     check("cap:k=?", "cap:k=?", True, "K=?/K=?")
-    check("cap:k=?", "cap:k=!", True, "K=?/K=!")
-    check("cap:k=?", "cap:k", True, "K=?/K=*")
-    check("cap:k=?", "cap:k=v", True, "K=?/K=v")
+    check("cap:k=?", "cap:k=!", False, "K=?/K=!")
+    check("cap:k=?", "cap:k", False, "K=?/K=*")
+    check("cap:k=?", "cap:k=v", False, "K=?/K=v")
 
     # Instance K=!, Pattern variations
     check("cap:k=!", "cap:", True, "K=!/(none)")
@@ -1026,7 +1031,7 @@ def test_0073_full_cross_product_matching():
     check("cap:k", "cap:k=?", True, "K=*/K=?")
     check("cap:k", "cap:k=!", False, "K=*/K=!")
     check("cap:k", "cap:k", True, "K=*/K=*")
-    check("cap:k", "cap:k=v", True, "K=*/K=v")
+    check("cap:k", "cap:k=v", False, "K=*/K=v")
 
     # Instance K=v, Pattern variations
     check("cap:k=v", "cap:", True, "K=v/(none)")
@@ -1042,9 +1047,12 @@ def test_0074_mixed_special_values():
     # Test URNs with multiple special values
     pattern = TaggedUrn.from_string("cap:required;optional=?;forbidden=!;exact=pdf")
 
-    # Instance that satisfies all constraints
-    good_instance = TaggedUrn.from_string("cap:required=yes;optional=maybe;exact=pdf")
+    # Instance that satisfies all constraints — including stating that the
+    # forbidden key is absent, which leaving it out does not promise.
+    good_instance = TaggedUrn.from_string("cap:required=yes;optional=maybe;forbidden=!;exact=pdf")
     assert good_instance.conforms_to(pattern)
+    silent_on_forbidden = TaggedUrn.from_string("cap:required=yes;optional=maybe;exact=pdf")
+    assert not silent_on_forbidden.conforms_to(pattern)
 
     # Instance missing required tag
     missing_required = TaggedUrn.from_string("cap:optional=maybe;exact=pdf")
@@ -1093,23 +1101,25 @@ def test_0076_compatibility_with_special_values():
     assert not must_not.accepts(specific)
     assert not specific.accepts(must_not)
 
-    # ! vs ?: bidirectional (? accepts everything)
+    # ! vs ?: ? accepts everything; ! does not accept ?, which promises nothing
+    # about absence.
     assert unspecified.accepts(must_not)
-    assert must_not.accepts(unspecified)
+    assert not must_not.accepts(unspecified)
 
     # ! vs missing: missing has no ext constraint, ! has ext=!
     # missing.accepts(must_not): pattern=missing has no ext constraint -> True
     assert missing.accepts(must_not)
-    # must_not.accepts(missing): pattern=must_not has ext=!, instance=missing has no ext -> True (absent matches !)
-    assert must_not.accepts(missing)
+    # must_not.accepts(missing): an instance that does not mention ext has not
+    # said it is absent -> False
+    assert not must_not.accepts(missing)
 
     # ! vs !: both accept each other
     assert must_not.accepts(must_not)
 
     # * vs specific: * accepts specific (pattern * matches any value)
     assert must_have.accepts(specific)
-    # specific accepts *: pattern specific=pdf, instance *=any -> True (* in instance matches any pattern value)
-    assert specific.accepts(must_have)
+    # specific does not accept *: "some ext" is not a promise of pdf
+    assert not specific.accepts(must_have)
 
     # * vs *: both accept each other
     assert must_have.accepts(must_have)
@@ -1243,9 +1253,10 @@ def test_586_special_values():
     must_not = TaggedUrn.from_string("cap:ext=!")  # ext=!
     unspecified = TaggedUrn.from_string("cap:ext=?")  # ext=?
 
-    # must_have (*) and exact (pdf): equivalent — * accepts any value
-    # bidirectionally (instance * is fine with pattern pdf, pattern * accepts instance pdf)
-    assert must_have.is_equivalent(exact)
+    # must_have (*) and exact (pdf): comparable — a pdf is some ext — and NOT
+    # equivalent: equivalence is "the same tag set" (tagged-urn formal,
+    # `equivalent_iff_same_forms`).
+    assert not must_have.is_equivalent(exact)
     assert must_have.is_comparable(exact)
 
     # must_not (!) and exact (pdf): incomparable (conflict both directions)
@@ -1256,10 +1267,13 @@ def test_586_special_values():
     assert not must_not.is_comparable(must_have)
     assert not must_not.is_equivalent(must_have)
 
-    # unspecified (?) is equivalent to everything — ? matches anything
-    assert unspecified.is_equivalent(exact)
-    assert unspecified.is_equivalent(must_have)
-    assert unspecified.is_equivalent(must_not)
+    # unspecified (?) accepts everything, and is equivalent only to what also
+    # constrains nothing.
+    assert not unspecified.is_equivalent(exact)
+    assert not unspecified.is_equivalent(must_have)
+    assert not unspecified.is_equivalent(must_not)
+    assert unspecified.is_comparable(exact)
+    assert unspecified.is_equivalent(TaggedUrn.from_string("cap:"))
 
 
 # =========================================================================
@@ -1410,3 +1424,30 @@ def test_595_builder_matching_with_built_urn():
     assert specific_instance.specificity() == 12  # 3 exact × 4 = 12
     assert general_pattern.specificity() == 4     # 1 exact × 4 = 4
     assert wildcard_pattern.specificity() == 10   # 2 exact × 4 + 1 * × 2 = 8 + 2 = 10
+
+
+# TEST599: every row of the proved model's table.
+#
+# The rules are proved in ../formal (Lean); this is what ties them to this
+# mirror: every row of ../formal/conformance.json (written by the model,
+# `lake exe conformance`) is parsed by this parser and must get the model's
+# verdict. The same table runs in every mirror.
+def test_599_every_row_of_the_models_table():
+    import json
+    import pathlib
+
+    table_path = pathlib.Path(__file__).resolve().parents[2] / "formal" / "conformance.json"
+    table = json.loads(table_path.read_text())
+    wrong = []
+    for row in table["refines"]:
+        a = TaggedUrn.from_string(row["instance"])
+        b = TaggedUrn.from_string(row["pattern"])
+        if a.conforms_to(b) != row["refines"]:
+            wrong.append(f"{row['instance']} ⪯ {row['pattern']}: model {row['refines']}")
+        if a.is_equivalent(b) != row["equivalent"]:
+            wrong.append(f"{row['instance']} ≡ {row['pattern']}: model {row['equivalent']}")
+    for row in table["scores"]:
+        if TaggedUrn.from_string(row["urn"]).specificity() != row["score"]:
+            wrong.append(f"specificity {row['urn']}: model {row['score']}")
+    assert len(table["refines"]) > 4000 and len(table["scores"]) > 60, "the table is the full one"
+    assert not wrong, f"{len(wrong)} answer(s) differ from the model, e.g. {wrong[:8]}"
