@@ -228,6 +228,13 @@ class TaggedUrn:
         """The tags, as stored values (``*``, ``?``, ``!``, ``?=v``, ``!=v``, or an exact value), read-only."""
         return MappingProxyType(self._tags)
 
+    @property
+    def formal(self) -> _formal.Wf:
+        """This URN on the proved model's side. A module generated from a model that
+        builds on tagged-urn's names this type for the model's URNs, so it passes to
+        that module's functions as it is."""
+        return self._formal
+
     @classmethod
     def empty(cls, prefix: str) -> 'TaggedUrn':
         """Create an empty tagged URN with the specified prefix"""
