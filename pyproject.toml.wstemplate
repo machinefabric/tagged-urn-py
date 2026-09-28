@@ -6,7 +6,7 @@
 # releasing.
 {%- endif %}
 [build-system]
-requires = ["scikit-build-core>=0.10", "lungo-py=={% if env.MFR_LOCAL_LIBS %}{{ projects.lungo.version }}{% else %}{{ projects.lungo.latest_remote_version }}{% endif %}"]
+requires = ["scikit-build-core>=0.10", "lungo-py=={{ projects.lungo.version }}"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -16,7 +16,7 @@ description = "Tagged URN - Flat tag-based identifier system"
 authors = [{name = "https://github.com/machinefabric"}]
 license = {text = "MIT"}
 requires-python = ">=3.9"
-dependencies = ["lungo-py=={% if env.MFR_LOCAL_LIBS %}{{ projects.lungo.version }}{% else %}{{ projects.lungo.latest_remote_version }}{% endif %}"]
+dependencies = ["lungo-py=={{ projects.lungo.version }}"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
