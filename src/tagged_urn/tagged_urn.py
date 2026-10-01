@@ -659,6 +659,44 @@ class TaggedUrn:
         TaggedUrn._same_prefix(instance, pattern)
         return _formal.refines(instance._formal, pattern._formal)
 
+    def meets(self, other: 'TaggedUrn') -> bool:
+        """Whether this URN and ``other`` COULD be about the same thing: some
+        thing is described by both. Symmetric — neither is the instance.
+
+        ``conforms_to`` is a guarantee: everything this URN describes, the
+        pattern describes. This is the other question the same meanings answer,
+        and the one a search asks: ``media:ext`` (some ext) does not conform to
+        ``media:ext=pdf``, and is not excluded by it either — it meets it.
+        Whatever conforms meets; what meets need not conform, and meeting is
+        not transitive (a pdf meets "some ext", which meets a png).
+
+        Decided by the model (``TaggedUrn.Exec.meets``).
+        """
+        TaggedUrn._same_prefix(self, other)
+        return _formal.meets(self._formal, other._formal)
+
+    def satisfies(self, pattern: 'TaggedUrn') -> bool:
+        """Whether this URN, read as a COMPLETE thing, satisfies ``pattern``.
+
+        A description that omits a key says nothing about it, which is how
+        ``conforms_to`` reads both sides. A thing that exists — a value with
+        these tags, a cap's own list of tags — omits a key because it does not
+        have it. Read so, a thing that does not mention ``x`` satisfies ``!x``.
+
+        Use this where the left side is what something IS; use ``conforms_to``
+        where it is what something is declared to take or give. Decided by the
+        model (``TaggedUrn.Exec.refinesClosed``).
+        """
+        TaggedUrn._same_prefix(self, pattern)
+        return _formal.refines_closed(self._formal, pattern._formal)
+
+    def may_satisfy(self, pattern: 'TaggedUrn') -> bool:
+        """Whether this URN, read as a complete thing, COULD satisfy
+        ``pattern``: ``satisfies`` is to this as ``conforms_to`` is to
+        ``meets``."""
+        TaggedUrn._same_prefix(self, pattern)
+        return _formal.meets_closed(self._formal, pattern._formal)
+
     @staticmethod
     def _same_prefix(a: 'TaggedUrn', b: 'TaggedUrn') -> None:
         if a.prefix != b.prefix:
@@ -704,6 +742,17 @@ class TaggedUrn:
         pattern allows too (``tagMatch_iff_allows`` in ``formal/``).
         """
         return _formal.values_match(_constraint_of(inst), _constraint_of(patt))
+
+    @staticmethod
+    def _values_meet(a: Optional[str], b: Optional[str]) -> bool:
+        """Whether two stored values allow a common state at one key."""
+        return _formal.values_meet(_constraint_of(a), _constraint_of(b))
+
+    @staticmethod
+    def _values_match_closed(inst: Optional[str], patt: Optional[str]) -> bool:
+        """One key of a complete thing against a pattern: an omitted key is
+        absent."""
+        return _formal.values_match_closed(_constraint_of(inst), _constraint_of(patt))
 
     def conforms_to_str(self, pattern_str: str) -> bool:
         """Check if this URN (instance) satisfies a string pattern's constraints."""

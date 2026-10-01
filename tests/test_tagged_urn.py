@@ -1431,7 +1431,9 @@ def test_595_builder_matching_with_built_urn():
 # The rules are proved in ../formal (Lean); this is what ties them to this
 # mirror: every row of ../formal/conformance.json (written by the model,
 # `lake exe conformance`) is parsed by this parser and must get the model's
-# verdict. The same table runs in every mirror.
+# verdict — for the guarantee (conforms_to), the possibility (meets), and the
+# complete reading of the instance (satisfies, may_satisfy). The same table
+# runs in every mirror.
 def test_599_every_row_of_the_models_table():
     import json
     import pathlib
@@ -1446,6 +1448,10 @@ def test_599_every_row_of_the_models_table():
             wrong.append(f"{row['instance']} ⪯ {row['pattern']}: model {row['refines']}")
         if a.is_equivalent(b) != row["equivalent"]:
             wrong.append(f"{row['instance']} ≡ {row['pattern']}: model {row['equivalent']}")
+        for name, got in (("meets", a.meets(b)), ("satisfies", a.satisfies(b)),
+                          ("may_satisfy", a.may_satisfy(b))):
+            if got != row[name]:
+                wrong.append(f"{row['instance']} {name} {row['pattern']}: model {row[name]}")
     for row in table["scores"]:
         if TaggedUrn.from_string(row["urn"]).specificity() != row["score"]:
             wrong.append(f"specificity {row['urn']}: model {row['score']}")

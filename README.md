@@ -58,6 +58,19 @@ urn = (TaggedUrnBuilder("cap")
 pattern = TaggedUrn.from_string("cap:generate")
 assert urn.conforms_to(pattern)
 
+# conforms_to is a guarantee. "Some ext" is not guaranteed to be a pdf, and it
+# could be one: that is meets.
+some_ext = TaggedUrn.from_string("media:ext")
+pdf = TaggedUrn.from_string("media:ext=pdf")
+assert not some_ext.conforms_to(pdf)
+assert some_ext.meets(pdf)
+
+# A description that omits a key says nothing about it; a complete thing — a
+# value's media, a cap's own tags — does not have it: that is satisfies.
+uncompressed = TaggedUrn.from_string("media:ext=pdf;!compressed")
+assert not pdf.conforms_to(uncompressed)
+assert pdf.satisfies(uncompressed)
+
 # Get specificity score
 score = urn.specificity()
 ```
