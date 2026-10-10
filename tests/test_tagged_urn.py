@@ -1457,3 +1457,25 @@ def test_599_every_row_of_the_models_table():
             wrong.append(f"specificity {row['urn']}: model {row['score']}")
     assert len(table["refines"]) > 4000 and len(table["scores"]) > 60, "the table is the full one"
     assert not wrong, f"{len(wrong)} answer(s) differ from the model, e.g. {wrong[:8]}"
+
+
+# TEST600: every function of the proved model this mirror calls carries a proved claim.
+#
+# The model's package carries what is proved of each function it exports (its assurance
+# document, generated from ../formal): each one decides, equals or keeps what its claim says,
+# and none rests on an assumption about the host — the model needs none.
+def test_600_every_model_function_carries_a_proved_claim():
+    from tagged_urn import _formal
+
+    a = _formal.ASSURANCE
+    assert a.facilities == () and a.assumptions == (), "the model assumes nothing of the host"
+    assert a.exports
+    for e in a.exports:
+        assert e.claims, f"{e.name} carries no claim"
+        assert e.assumptions == (), f"{e.name} rests on {e.assumptions}"
+        for name in e.claims:
+            claim = a.claim(name)
+            assert claim.status == "proved", name
+            assert e.name in claim.subjects, f"{name} is about {e.name}"
+    refines = a.claim("TaggedUrn.Exec.refines_decides")
+    assert (refines.relation, refines.specifications) == ("lungo.decides", ("TaggedUrn.refines",))
