@@ -2,7 +2,7 @@
 
 Generated from the test catalogue. Edit the tests, not this file.
 
-96 tests: 96 numbered, 0 unnumbered.
+97 tests: 97 numbered, 0 unnumbered.
 
 ## Numbered
 
@@ -104,4 +104,5 @@ Generated from the test catalogue. Edit the tests, not this file.
 | TEST594 | tagged-urn/tagged-urn-py | python | `test_594_builder_custom_prefix` | tests/test_tagged_urn.py:1387 | TEST594: Builder with custom prefix |
 | TEST595 | tagged-urn/tagged-urn-py | python | `test_595_builder_matching_with_built_urn` | tests/test_tagged_urn.py:1395 | TEST595: Builder matching with built URN |
 | TEST599 | tagged-urn/tagged-urn-py | python | `test_599_every_row_of_the_models_table` | tests/test_tagged_urn.py:1437 | TEST599: every row of the proved model's table. The rules are proved in ../formal (Lean); this is what ties them to this mirror: every row of ../formal/conformance.json (written by the model, `lake exe conformance`) is parsed by this parser and must get the model's verdict — for the guarantee (conforms_to), the possibility (meets), and the complete reading of the instance (satisfies, may_satisfy). The same table runs in every mirror. |
+| TEST600 | tagged-urn/tagged-urn-py | python | `test_600_every_model_function_carries_a_proved_claim` | tests/test_tagged_urn.py:1467 | TEST600: every function of the proved model this mirror calls carries a proved claim. The model's package carries what is proved of each function it exports (its assurance document, generated from ../formal): each one decides, equals or keeps what its claim says, and none rests on an assumption about the host — the model needs none. |
 
