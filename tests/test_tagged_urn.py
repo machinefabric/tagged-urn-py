@@ -1432,7 +1432,8 @@ def test_595_builder_matching_with_built_urn():
 # mirror: every row of ../formal/conformance.json (written by the model,
 # `lake exe conformance`) is parsed by this parser and must get the model's
 # verdict — for the guarantee (conforms_to), the possibility (meets), and the
-# complete reading of the instance (satisfies, may_satisfy). The same table
+# complete reading of the instance (satisfies, may_satisfy) — and every set of
+# URNs in it must get the model's bound (least_upper_bound). The same table
 # runs in every mirror.
 def test_599_every_row_of_the_models_table():
     import json
@@ -1455,7 +1456,13 @@ def test_599_every_row_of_the_models_table():
     for row in table["scores"]:
         if TaggedUrn.from_string(row["urn"]).specificity() != row["score"]:
             wrong.append(f"specificity {row['urn']}: model {row['score']}")
-    assert len(table["refines"]) > 4000 and len(table["scores"]) > 60, "the table is the full one"
+    for row in table["bounds"]:
+        urns = [TaggedUrn.from_string(u) for u in row["urns"]]
+        bound = TaggedUrn.least_upper_bound("media", urns)
+        if bound != TaggedUrn.from_string(row["bound"]):
+            wrong.append(f"bound of {row['urns']}: {bound}, model {row['bound']}")
+    assert (len(table["refines"]) > 4000 and len(table["scores"]) > 60
+            and len(table["bounds"]) > 5000), "the table is the full one"
     assert not wrong, f"{len(wrong)} answer(s) differ from the model, e.g. {wrong[:8]}"
 
 
@@ -1479,3 +1486,21 @@ def test_600_every_model_function_carries_a_proved_claim():
             assert e.name in claim.subjects, f"{name} is about {e.name}"
     refines = a.claim("TaggedUrn.Exec.refines_decides")
     assert (refines.relation, refines.specifications) == ("lungo.decides", ("TaggedUrn.refines",))
+
+
+# TEST392: the bound of several URNs: the values they share, a key every one sets to differing values as "some value", the coarser of two comparable URNs, nothing for none, and another prefix refused
+def test_392_least_upper_bound():
+    from tagged_urn import PrefixMismatchError
+
+    def bound(*urns):
+        return TaggedUrn.least_upper_bound("media", [TaggedUrn.from_string(u) for u in urns])
+
+    assert bound("media:ext=png;image", "media:ext=jpeg;image") == TaggedUrn.from_string("media:ext;image")
+    # One input already holds the other: the bound is that input, not the wider `ext`.
+    assert bound("media:ext=png", "media:ext!=pdf") == TaggedUrn.from_string("media:ext!=pdf")
+    # A key one input omits says nothing there, so the bound says nothing either.
+    assert bound("media:ext=png;image", "media:image") == TaggedUrn.from_string("media:image")
+    assert bound() == TaggedUrn.from_string("media:")
+
+    with pytest.raises(PrefixMismatchError):
+        bound("media:image", "cap:image")

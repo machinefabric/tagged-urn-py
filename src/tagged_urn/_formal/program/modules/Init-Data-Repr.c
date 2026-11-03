@@ -2,6 +2,82 @@
 /* Compiled Lean module Init.Data.Repr. */
 #include "tagged_urn_formal_program.h"
 
+/* Lean: Bool.repr._redArg */
+/* Compiled from: Bool.repr */
+/* Source: <lean>/Init/Data/Repr.lean:76:1 */
+lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg(uint8_t x_1) {
+    lungo_obj x_2;
+    lungo_obj x_3;
+    switch (x_1) {
+        case 0: {
+            x_2 = tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__1();
+            return x_2;
+        }
+        default: {
+            x_3 = tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__3();
+            return x_3;
+        }
+    }
+}
+
+/* Lean: Bool.repr._redArg._closed_0 */
+/* Compiled from: Bool.repr */
+/* Source: <lean>/Init/Data/Repr.lean:76:1 */
+static lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__0__init(void) {
+    lungo_obj x_1;
+    x_1 = lungo_mk_string_unchecked((const uint8_t *)"false", 5, 5);
+    return x_1;
+}
+static lungo_lazy_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__0__cell;
+lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__0(void) {
+    return lungo_lazy_obj_get(&tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__0__cell, tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__0__init);
+}
+
+/* Lean: Bool.repr._redArg._closed_1 */
+/* Compiled from: Bool.repr */
+/* Source: <lean>/Init/Data/Repr.lean:76:1 */
+static lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__1__init(void) {
+    lungo_obj x_1;
+    lungo_obj x_2;
+    x_1 = tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__0();
+    x_2 = lungo_alloc_ctor(3, 1, 0);
+    lungo_ctor_set(x_2, 0, x_1);
+    return x_2;
+}
+static lungo_lazy_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__1__cell;
+lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__1(void) {
+    return lungo_lazy_obj_get(&tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__1__cell, tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__1__init);
+}
+
+/* Lean: Bool.repr._redArg._closed_2 */
+/* Compiled from: Bool.repr */
+/* Source: <lean>/Init/Data/Repr.lean:76:1 */
+static lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__2__init(void) {
+    lungo_obj x_1;
+    x_1 = lungo_mk_string_unchecked((const uint8_t *)"true", 4, 4);
+    return x_1;
+}
+static lungo_lazy_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__2__cell;
+lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__2(void) {
+    return lungo_lazy_obj_get(&tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__2__cell, tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__2__init);
+}
+
+/* Lean: Bool.repr._redArg._closed_3 */
+/* Compiled from: Bool.repr */
+/* Source: <lean>/Init/Data/Repr.lean:76:1 */
+static lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__3__init(void) {
+    lungo_obj x_1;
+    lungo_obj x_2;
+    x_1 = tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__2();
+    x_2 = lungo_alloc_ctor(3, 1, 0);
+    lungo_ctor_set(x_2, 0, x_1);
+    return x_2;
+}
+static lungo_lazy_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__3__cell;
+lungo_obj tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__3(void) {
+    return lungo_lazy_obj_get(&tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__3__cell, tagged_urn_formal__l_Bool_drepr_d__redArg_d__closed__3__init);
+}
+
 /* Lean: Char.quoteCore */
 /* Source: <lean>/Init/Data/Repr.lean:360:1 */
 lungo_obj tagged_urn_formal__l_Char_dquoteCore(uint32_t x_1, uint8_t x_2) {

@@ -15,10 +15,12 @@ add_library(tagged_urn_formal_lean SHARED
   program/modules/Init-Core.c
   program/modules/Init-Data-ByteArray-Basic.c
   program/modules/Init-Data-ByteArray-Extra.c
+  program/modules/Init-Data-Format-Basic.c
   program/modules/Init-Data-Int-Basic.c
   program/modules/Init-Data-Int-Repr.c
   program/modules/Init-Data-List-Basic.c
   program/modules/Init-Data-Nat-Bitwise-Basic.c
+  program/modules/Init-Data-Option-Basic.c
   program/modules/Init-Data-Random.c
   program/modules/Init-Data-Repr.c
   program/modules/Init-Data-String-Basic.c
@@ -28,6 +30,7 @@ add_library(tagged_urn_formal_lean SHARED
   program/modules/Init-Data-String-Modify.c
   program/modules/Init-Data-UInt-Basic.c
   program/modules/Init-Data-UInt-BasicAux.c
+  program/modules/Init-Meta-Defs.c
   program/modules/Init-Prelude.c
   program/modules/Init-System-IO.c
   program/modules/Init-System-IOError.c
@@ -35,8 +38,10 @@ add_library(tagged_urn_formal_lean SHARED
   program/modules/Init-Util.c
   program/modules/Lean-Data-Iterators-Producers-PersistentHashMap.c
   program/modules/Lean-Elab-Structure.c
+  program/modules/Std-Http-Data-URI-Basic.c
   program/modules/TaggedUrn-Constraint.c
   program/modules/TaggedUrn-Exec.c
+  program/modules/TaggedUrn-Join.c
   program/modules/TaggedUrn-Sorted.c
   program/modules/TaggedUrn-Urn.c
   program/tagged_urn_formal_boundary.c

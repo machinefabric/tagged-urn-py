@@ -697,6 +697,34 @@ class TaggedUrn:
         TaggedUrn._same_prefix(self, pattern)
         return _formal.meets_closed(self._formal, pattern._formal)
 
+    @classmethod
+    def least_upper_bound(cls, prefix: str, urns: List['TaggedUrn']) -> 'TaggedUrn':
+        """The most specific URN every one of ``urns`` conforms to: their common
+        denominator.
+
+        Key by key, the bound allows every state some input allows. Where no
+        single form says exactly that, there is no least bound at all —
+        ``ext=png`` and ``ext=jpeg`` are both ``ext``, both ``ext!=pdf`` and
+        both ``ext!=gif`` — so the bound is the least among those that exclude
+        only values the inputs name: here ``ext``. When one input holds all the
+        others, the bound is that input. The bound of no URNs is the URN with
+        no tags.
+
+        Made by the model (``TaggedUrn.Exec.leastUpperBound``), whose theorems
+        say every input conforms to the bound and the bound conforms to every
+        such bound of them. Every URN must have the prefix; another raises
+        ``PrefixMismatchError``.
+        """
+        prefix = prefix.lower()
+        tags = _formal.least_upper_bound(prefix, [u._formal for u in urns])
+        if tags is None:
+            other = next((u for u in urns if u.prefix != prefix), None)
+            if other is None:
+                raise RuntimeError(
+                    f"tagged-urn: the model made no bound of URNs that all have the prefix {prefix}")
+            raise PrefixMismatchError(prefix, other.prefix)
+        return cls(prefix, dict(tags))
+
     @staticmethod
     def _same_prefix(a: 'TaggedUrn', b: 'TaggedUrn') -> None:
         if a.prefix != b.prefix:

@@ -73,6 +73,13 @@ assert pdf.satisfies(uncompressed)
 
 # Get specificity score
 score = urn.specificity()
+
+# The most specific URN every one conforms to: an ext, some value, and an image.
+bound = TaggedUrn.least_upper_bound("media", [
+    TaggedUrn.from_string("media:ext=png;image"),
+    TaggedUrn.from_string("media:ext=jpeg;image"),
+])
+assert bound == TaggedUrn.from_string("media:ext;image")
 ```
 
 ## Testing

@@ -74,19 +74,19 @@ static const uint8_t tagged_urn_formal__t_6[] = {
     0x10,
 };
 static const uint8_t tagged_urn_formal__t_7[] = {
-    0x15, 0x17, 0x10, 0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x15, 0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_8[] = {
-    0x14, 0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x14, 0x15, 0x17, 0x10, 0x10,
 };
 static const uint8_t tagged_urn_formal__t_9[] = {
-    0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x10,
 };
 static const uint8_t tagged_urn_formal__t_10[] = {
-    0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x15, 0x17, 0x10, 0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_11[] = {
-    0x02,
+    0x14, 0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_12[] = {
     0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -119,16 +119,16 @@ static const uint8_t tagged_urn_formal__t_21[] = {
     0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_22[] = {
-    0x00,
+    0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_23[] = {
-    0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x02,
 };
 static const uint8_t tagged_urn_formal__t_24[] = {
-    0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x1b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_25[] = {
-    0x02,
+    0x00,
 };
 static const uint8_t tagged_urn_formal__t_26[] = {
     0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -146,6 +146,15 @@ static const uint8_t tagged_urn_formal__t_30[] = {
     0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static const uint8_t tagged_urn_formal__t_31[] = {
+    0x02,
+};
+static const uint8_t tagged_urn_formal__t_32[] = {
+    0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+static const uint8_t tagged_urn_formal__t_33[] = {
+    0x1b, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+static const uint8_t tagged_urn_formal__t_34[] = {
     0x02,
 };
 
@@ -185,40 +194,41 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dequivalent(const uint8_t *inp
     return lungo_call_end(call, out);
 }
 
+/* TaggedUrn.Exec.leastUpperBound : String → List TaggedUrn.Exec.Wf → Option (List (String × String)) */
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dleastUpperBound(const uint8_t *input, size_t len, lungo_buffer *out) {
+    tagged_urn_formal__initialize();
+    lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
+    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_6, 1);
+    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_7, 10);
+    if (!lungo_call_complete(call)) {
+        lungo_dec(a_0);
+        lungo_dec(a_1);
+        return lungo_call_end(call, out);
+    }
+    lungo_obj r = tagged_urn_formal__l_TaggedUrn_dExec_dleastUpperBound(a_0, a_1);
+    lungo_dec(a_0);
+    lungo_call_write(call, r, tagged_urn_formal__t_8, 5);
+    return lungo_call_end(call, out);
+}
+
 /* TaggedUrn.Exec.make : String → List (String × TaggedUrn.Constraint) → Option TaggedUrn.Exec.Wf */
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmake(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
-    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_6, 1);
-    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_7, 12);
+    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_9, 1);
+    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_10, 12);
     if (!lungo_call_complete(call)) {
         lungo_dec(a_0);
         lungo_dec(a_1);
         return lungo_call_end(call, out);
     }
     lungo_obj r = tagged_urn_formal__l_TaggedUrn_dExec_dmake(a_0, a_1);
-    lungo_call_write(call, r, tagged_urn_formal__t_8, 10);
+    lungo_call_write(call, r, tagged_urn_formal__t_11, 10);
     return lungo_call_end(call, out);
 }
 
 /* TaggedUrn.Exec.meets : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmeets(const uint8_t *input, size_t len, lungo_buffer *out) {
-    tagged_urn_formal__initialize();
-    lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
-    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_9, 9);
-    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_10, 9);
-    if (!lungo_call_complete(call)) {
-        lungo_dec(a_0);
-        lungo_dec(a_1);
-        return lungo_call_end(call, out);
-    }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dmeets(a_0, a_1);
-    lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_11, 1);
-    return lungo_call_end(call, out);
-}
-
-/* TaggedUrn.Exec.meetsClosed : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
-int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmeetsClosed(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
     lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_12, 9);
@@ -228,13 +238,13 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmeetsClosed(const uint8_t *in
         lungo_dec(a_1);
         return lungo_call_end(call, out);
     }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dmeetsClosed(a_0, a_1);
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dmeets(a_0, a_1);
     lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_14, 1);
     return lungo_call_end(call, out);
 }
 
-/* TaggedUrn.Exec.refines : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
-int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefines(const uint8_t *input, size_t len, lungo_buffer *out) {
+/* TaggedUrn.Exec.meetsClosed : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmeetsClosed(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
     lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_15, 9);
@@ -244,15 +254,13 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefines(const uint8_t *input,
         lungo_dec(a_1);
         return lungo_call_end(call, out);
     }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_drefines(a_0, a_1);
-    lungo_dec(a_0);
-    lungo_dec(a_1);
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dmeetsClosed(a_0, a_1);
     lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_17, 1);
     return lungo_call_end(call, out);
 }
 
-/* TaggedUrn.Exec.refinesClosed : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
-int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefinesClosed(const uint8_t *input, size_t len, lungo_buffer *out) {
+/* TaggedUrn.Exec.refines : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefines(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
     lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_18, 9);
@@ -262,8 +270,26 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefinesClosed(const uint8_t *
         lungo_dec(a_1);
         return lungo_call_end(call, out);
     }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_drefinesClosed(a_0, a_1);
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_drefines(a_0, a_1);
+    lungo_dec(a_0);
+    lungo_dec(a_1);
     lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_20, 1);
+    return lungo_call_end(call, out);
+}
+
+/* TaggedUrn.Exec.refinesClosed : TaggedUrn.Exec.Wf → TaggedUrn.Exec.Wf → Bool */
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefinesClosed(const uint8_t *input, size_t len, lungo_buffer *out) {
+    tagged_urn_formal__initialize();
+    lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
+    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_21, 9);
+    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_22, 9);
+    if (!lungo_call_complete(call)) {
+        lungo_dec(a_0);
+        lungo_dec(a_1);
+        return lungo_call_end(call, out);
+    }
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_drefinesClosed(a_0, a_1);
+    lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_23, 1);
     return lungo_call_end(call, out);
 }
 
@@ -271,36 +297,18 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefinesClosed(const uint8_t *
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dspecificity(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
-    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_21, 9);
+    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_24, 9);
     if (!lungo_call_complete(call)) {
         lungo_dec(a_0);
         return lungo_call_end(call, out);
     }
     lungo_obj r = tagged_urn_formal__l_TaggedUrn_dExec_dspecificity(a_0);
-    lungo_call_write(call, r, tagged_urn_formal__t_22, 1);
+    lungo_call_write(call, r, tagged_urn_formal__t_25, 1);
     return lungo_call_end(call, out);
 }
 
 /* TaggedUrn.Exec.valuesMatch : TaggedUrn.Constraint → TaggedUrn.Constraint → Bool */
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMatch(const uint8_t *input, size_t len, lungo_buffer *out) {
-    tagged_urn_formal__initialize();
-    lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
-    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_23, 9);
-    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_24, 9);
-    if (!lungo_call_complete(call)) {
-        lungo_dec(a_0);
-        lungo_dec(a_1);
-        return lungo_call_end(call, out);
-    }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatch(a_0, a_1);
-    lungo_dec(a_0);
-    lungo_dec(a_1);
-    lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_25, 1);
-    return lungo_call_end(call, out);
-}
-
-/* TaggedUrn.Exec.valuesMatchClosed : TaggedUrn.Constraint → TaggedUrn.Constraint → Bool */
-int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMatchClosed(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
     lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_26, 9);
@@ -310,15 +318,15 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMatchClosed(const uint8
         lungo_dec(a_1);
         return lungo_call_end(call, out);
     }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatchClosed(a_0, a_1);
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatch(a_0, a_1);
     lungo_dec(a_0);
     lungo_dec(a_1);
     lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_28, 1);
     return lungo_call_end(call, out);
 }
 
-/* TaggedUrn.Exec.valuesMeet : TaggedUrn.Constraint → TaggedUrn.Constraint → Bool */
-int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMeet(const uint8_t *input, size_t len, lungo_buffer *out) {
+/* TaggedUrn.Exec.valuesMatchClosed : TaggedUrn.Constraint → TaggedUrn.Constraint → Bool */
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMatchClosed(const uint8_t *input, size_t len, lungo_buffer *out) {
     tagged_urn_formal__initialize();
     lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
     lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_29, 9);
@@ -328,10 +336,28 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMeet(const uint8_t *inp
         lungo_dec(a_1);
         return lungo_call_end(call, out);
     }
-    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMeet(a_0, a_1);
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatchClosed(a_0, a_1);
     lungo_dec(a_0);
     lungo_dec(a_1);
     lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_31, 1);
+    return lungo_call_end(call, out);
+}
+
+/* TaggedUrn.Exec.valuesMeet : TaggedUrn.Constraint → TaggedUrn.Constraint → Bool */
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dvaluesMeet(const uint8_t *input, size_t len, lungo_buffer *out) {
+    tagged_urn_formal__initialize();
+    lungo_call *call = lungo_call_begin(tagged_urn_formal__types(), input, len);
+    lungo_obj a_0 = lungo_call_read(call, tagged_urn_formal__t_32, 9);
+    lungo_obj a_1 = lungo_call_read(call, tagged_urn_formal__t_33, 9);
+    if (!lungo_call_complete(call)) {
+        lungo_dec(a_0);
+        lungo_dec(a_1);
+        return lungo_call_end(call, out);
+    }
+    uint8_t r = tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMeet(a_0, a_1);
+    lungo_dec(a_0);
+    lungo_dec(a_1);
+    lungo_call_write(call, lungo_box((size_t)r), tagged_urn_formal__t_34, 1);
     return lungo_call_end(call, out);
 }
 

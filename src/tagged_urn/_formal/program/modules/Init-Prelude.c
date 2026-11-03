@@ -19,11 +19,35 @@ lungo_obj tagged_urn_formal__l_Array_dmk(lungo_obj x_1, lungo_obj x_2) {
     return r;
 }
 
+/* Lean: Array.mkEmpty */
+/* Source: <lean>/Init/Prelude.lean:3235:1 */
+lungo_obj tagged_urn_formal__l_Array_dmkEmpty(lungo_obj x_1, lungo_obj x_2) {
+    (void)x_1;
+    lungo_obj r = lungo_lean_mk_empty_array_with_capacity(x_2);
+    return r;
+}
+
+/* Lean: Array.push */
+/* Source: <lean>/Init/Prelude.lean:3327:1 */
+lungo_obj tagged_urn_formal__l_Array_dpush(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
+    (void)x_1;
+    lungo_obj r = lungo_lean_array_push(x_2, x_3);
+    return r;
+}
+
 /* Lean: Array.size */
 /* Source: <lean>/Init/Prelude.lean:3259:1 */
 lungo_obj tagged_urn_formal__l_Array_dsize(lungo_obj x_1, lungo_obj x_2) {
     (void)x_1;
     lungo_obj r = lungo_lean_array_get_size(x_2);
+    return r;
+}
+
+/* Lean: Array.toList */
+/* Source: <lean>/Init/Prelude.lean:3217:3 */
+lungo_obj tagged_urn_formal__l_Array_dtoList(lungo_obj x_1, lungo_obj x_2) {
+    (void)x_1;
+    lungo_obj r = lungo_lean_array_to_list(x_2);
     return r;
 }
 
@@ -246,6 +270,28 @@ size_t tagged_urn_formal__l_USize_dofNatLT(lungo_obj x_1, lungo_obj x_2) {
     (void)x_2;
     size_t r = lungo_lean_usize_of_nat(x_1);
     return r;
+}
+
+/* Lean: instBEqOfDecidableEq._redArg._lam_0 */
+/* Compiled from: instBEqOfDecidableEq */
+/* Source: <lean>/Init/Prelude.lean:1069:1 */
+uint8_t tagged_urn_formal__l_instBEqOfDecidableEq_d__redArg_d__lam__0(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
+    lungo_obj x_4;
+    uint8_t x_5;
+    x_4 = lungo_apply_2(x_1, x_2, x_3);
+    x_5 = (uint8_t)lungo_unbox(x_4);
+    return x_5;
+}
+
+/* Lean: instBEqOfDecidableEq._redArg._lam_0._boxed */
+/* Compiled from: instBEqOfDecidableEq */
+/* Source: <lean>/Init/Prelude.lean:1069:1 */
+lungo_obj tagged_urn_formal__l_instBEqOfDecidableEq_d__redArg_d__lam__0_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
+    uint8_t x_4;
+    lungo_obj x_5;
+    x_4 = tagged_urn_formal__l_instBEqOfDecidableEq_d__redArg_d__lam__0(x_1, x_2, x_3);
+    x_5 = lungo_box((size_t)x_4);
+    return x_5;
 }
 
 /* Lean: instDecidableEqList._redArg */
