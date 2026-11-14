@@ -1,12 +1,13 @@
 # The package builds the program generated from the proved model in ../formal (src/tagged_urn/_formal,
 # see ../lungo.toml) with CMake, on lungo-py — at exactly the lungo release that generated it.
-{%- if env.MFR_LOCAL_LIBS %}
-# MFR_LOCAL_LIBS: lungo-py at the working copy's version, whose wheel is in lungo's local distribution
+{%- if env.MFR_LIBS == "working" %}
+# MFR_LIBS "working": lungo-py at the working copy's version, whose wheel is in lungo's local distribution
 # (pip --find-links <build root>/lungo/distribution/wheels). Re-render without it before committing or
 # releasing.
+{%- elif env.MFR_LIBS == "channel" %}
 {%- endif %}
 [build-system]
-requires = ["scikit-build-core>=0.10", "lungo-py=={% if env.MFR_LOCAL_LIBS %}{{ projects.lungo_rs.version }}{% else %}{{ projects.lungo_py.latest_remote_version }}{% endif %}"]
+requires = ["scikit-build-core>=0.10", "lungo-py=={% if env.MFR_LIBS == "working" %}{{ projects.lungo_rs.version }}{% elif env.MFR_LIBS == "channel" %}{{ projects.lungo_rs.version }}{% else %}{{ projects.lungo_py.latest_remote_version }}{% endif %}"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -16,7 +17,7 @@ description = "Tagged URN - Flat tag-based identifier system"
 authors = [{name = "https://github.com/machinefabric"}]
 license = {text = "MIT"}
 requires-python = ">=3.9"
-dependencies = ["lungo-py=={% if env.MFR_LOCAL_LIBS %}{{ projects.lungo_rs.version }}{% else %}{{ projects.lungo_py.latest_remote_version }}{% endif %}"]
+dependencies = ["lungo-py=={% if env.MFR_LIBS == "working" %}{{ projects.lungo_rs.version }}{% elif env.MFR_LIBS == "channel" %}{{ projects.lungo_rs.version }}{% else %}{{ projects.lungo_py.latest_remote_version }}{% endif %}"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
