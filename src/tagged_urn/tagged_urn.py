@@ -951,6 +951,52 @@ class TaggedUrn:
     def __hash__(self) -> int:
         return hash((self.prefix, tuple(sorted(self.tags.items()))))
 
+    #: Each constraint form's place in the order of URNs: the truth table's.
+    _FORM_ORDER = {
+        ConstraintUnconstrained: 0,
+        ConstraintOptionalNot: 1,
+        ConstraintPresent: 2,
+        ConstraintPresentNot: 3,
+        ConstraintExact: 4,
+        ConstraintAbsent: 5,
+    }
+
+    def ordering_key(self) -> tuple:
+        """The key URNs are ordered by: their parts, never their text. The
+        prefix, then the tags in key order, each by its key, then by its
+        constraint's form in the truth table's order (unconstrained,
+        optionalNot, present, presentNot, exact, absent), then by its value; a
+        URN whose tags are the beginning of another's stands first. The text
+        would order ``file;sample`` after ``file-path``, wherever one key is the
+        beginning of another."""
+        return (
+            self.prefix,
+            tuple(
+                (key, self._FORM_ORDER[type(c)], getattr(c, "value", ""))
+                for key, c in sorted(self._tags.items())
+            ),
+        )
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, TaggedUrn):
+            return NotImplemented
+        return self.ordering_key() < other.ordering_key()
+
+    def __le__(self, other: object) -> bool:
+        if not isinstance(other, TaggedUrn):
+            return NotImplemented
+        return self.ordering_key() <= other.ordering_key()
+
+    def __gt__(self, other: object) -> bool:
+        if not isinstance(other, TaggedUrn):
+            return NotImplemented
+        return self.ordering_key() > other.ordering_key()
+
+    def __ge__(self, other: object) -> bool:
+        if not isinstance(other, TaggedUrn):
+            return NotImplemented
+        return self.ordering_key() >= other.ordering_key()
+
 
 class UrnMatcher:
     """URN matching and selection utilities"""
