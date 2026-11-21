@@ -6,6 +6,7 @@ prefixes, wildcard support, and specificity comparison.
 What two URNs mean to each other — refinement, equivalence, comparability,
 specificity, one key's match — is decided by code generated from the proved
 model in ../formal (Lean) by lungo, in the module ``_formal``, not written here.
+Each tag is stored as the constraint it writes, the model's own ``Constraint``.
 """
 
 from enum import Enum
@@ -13,54 +14,16 @@ from types import MappingProxyType
 from typing import Dict, List, Mapping, Optional, Tuple
 
 from . import _formal
-
-
-def _constraint_of(value: Optional[str]) -> _formal.Constraint:
-    """The model's form of a stored tag value (None is a key the URN omits)."""
-    if value is None:
-        return _formal.ConstraintMissing()
-    if value == "?":
-        return _formal.ConstraintUnconstrained()
-    if value == "*":
-        return _formal.ConstraintPresent()
-    if value == "!":
-        return _formal.ConstraintAbsent()
-    if value.startswith("?="):
-        return _formal.ConstraintOptionalNot(value[2:])
-    if value.startswith("!="):
-        return _formal.ConstraintPresentNot(value[2:])
-    return _formal.ConstraintExact(value)
-
-
-def score_tag_value(value: str) -> int:
-    """Per-tag truth-table specificity score.
-
-    Applied uniformly to any stored tag value across the protocol —
-    media-URN tags, cap-tag y-axis, any other Tagged URN dimension.
-    Missing keys score 0; the caller filters them out before calling.
-
-    +--------------------+-------+----------------------+
-    | Stored value       | Score | Form                 |
-    +====================+=======+======================+
-    | ``"?"``            | 0     | ``?x`` no constraint |
-    | starts with ``?=`` | 1     | ``x?=v``             |
-    | ``"*"``            | 2     | ``x`` (``x=*``)      |
-    | starts with ``!=`` | 3     | ``x!=v``             |
-    | exact value        | 4     | ``x=v``              |
-    | ``"!"``            | 5     | ``!x``               |
-    +--------------------+-------+----------------------+
-    """
-    if value == "?":
-        return 0
-    if value == "*":
-        return 2
-    if value == "!":
-        return 5
-    if value.startswith("?="):
-        return 1
-    if value.startswith("!="):
-        return 3
-    return 4
+from ._formal import (
+    Constraint,
+    ConstraintAbsent,
+    ConstraintExact,
+    ConstraintMissing,
+    ConstraintOptionalNot,
+    ConstraintPresent,
+    ConstraintPresentNot,
+    ConstraintUnconstrained,
+)
 
 
 # Error classes
@@ -81,8 +44,8 @@ class TaggedUrnCoordinateDelta:
     def __init__(
         self,
         prefix: str,
-        removed: Optional[Dict[str, str]] = None,
-        added: Optional[Dict[str, str]] = None,
+        removed: Optional[Dict[str, Constraint]] = None,
+        added: Optional[Dict[str, Constraint]] = None,
         relation_kind: TaggedUrnRelationKind = TaggedUrnRelationKind.EQUIVALENT,
     ):
         self.prefix = prefix
@@ -120,17 +83,12 @@ class EmptyTagComponentError(TaggedUrnError):
 
 
 class InvalidCharacterError(TaggedUrnError):
-    """Disallowed character in key/value"""
+    """Disallowed character in prefix, key or value"""
     pass
 
 
 class DuplicateKeyError(TaggedUrnError):
     """Same key appears twice"""
-    pass
-
-
-class NumericKeyError(TaggedUrnError):
-    """Key is purely numeric"""
     pass
 
 
@@ -160,22 +118,26 @@ class WhitespaceInInputError(TaggedUrnError):
 class ParseState(Enum):
     """Parser states for the state machine.
 
-    The parser handles six tag forms — the canonical alphabet of the
-    constraint truth table:
+    The parser reads the six tag forms — the canonical alphabet of the
+    constraint truth table — into the constraint each writes:
 
-    +-------------------------+-----------+--------------+-------+--------------------------------------------+
-    | Authored                | Canonical | Stored value | Score | Reading                                    |
-    +=========================+===========+==============+=======+============================================+
-    | ``?x`` ≡ ``x?``         | ``?x``    | ``"?"``      | 0     | no constraint                              |
-    | ``?x=v`` ≡ ``x?=v``     | ``x?=v``  | ``"?=v"``    | 1     | absent OR (present and not v)              |
-    | ``x`` ≡ ``x=*``         | ``x``     | ``"*"``      | 2     | present with any value                     |
-    | ``!x=v`` ≡ ``x!=v``     | ``x!=v``  | ``"!=v"``    | 3     | present and not v                          |
-    | ``x=v``                 | ``x=v``   | ``"v"``      | 4     | present and exactly v (v ∉ {?, !, *})      |
-    | ``!x`` ≡ ``x!``         | ``!x``    | ``"!"``      | 5     | absent (must-not-have)                     |
-    +-------------------------+-----------+--------------+-------+--------------------------------------------+
+    +------------------------------+-----------+-------------------+-------+-------------------------------+
+    | Authored                     | Canonical | Constraint        | Score | Reading                       |
+    +==============================+===========+===================+=======+===============================+
+    | ``?x`` ≡ ``x?`` ≡ ``x=?``    | ``?x``    | unconstrained     | 0     | no constraint                 |
+    | ``?x=v`` ≡ ``x?=v`` ≡ ``x=?v``| ``x?=v`` | optionalNot v     | 1     | absent OR (present and not v) |
+    | ``x`` ≡ ``x=*``              | ``x``     | present           | 2     | present with any value        |
+    | ``!x=v`` ≡ ``x!=v`` ≡ ``x=!v``| ``x!=v`` | presentNot v      | 3     | present and not v             |
+    | ``x=v``                      | ``x=v``   | exact v           | 4     | present and exactly v         |
+    | ``!x`` ≡ ``x!`` ≡ ``x=!``    | ``!x``    | absent            | 5     | absent (must-not-have)        |
+    +------------------------------+-----------+-------------------+-------+-------------------------------+
 
-    Disallowed (hard parse errors): ``?x?``, ``?x?=v``, ``!x!=v``,
-    ``?!x``, ``!?x``, ``?x=*``, ``!x=*``, mixed prefix+infix.
+    A quoted value is literal: ``x="?v"`` is the exact value ``?v``, and
+    ``x="*"`` the exact value ``*``, never the marker.
+
+    Disallowed (hard parse errors): ``?x?``, ``?x?=v``, ``!x!=v``, ``?!x``,
+    ``!?x``, ``?x=?v``, ``?x=*``, ``!x=*``, ``x=?*``, ``x=!?``, and an
+    empty value.
     """
     EXPECTING_KEY = 1
     AFTER_PREFIX_QUESTION = 2
@@ -190,6 +152,144 @@ class ParseState(Enum):
     EXPECTING_SEMI_OR_END = 11
 
 
+def _is_identifier_start(c: str) -> bool:
+    """Whether ``c`` may begin a prefix or a key: an ASCII letter."""
+    return ('a' <= c <= 'z') or ('A' <= c <= 'Z')
+
+
+def _is_valid_key_char(c: str) -> bool:
+    """Whether ``c`` may stand in a prefix or key after its first character."""
+    return _is_identifier_start(c) or ('0' <= c <= '9') or c == '-'
+
+
+def _identifier(what: str, s: str) -> str:
+    """``s`` as an identifier — an ASCII letter, then ASCII letters, digits and
+    ``-`` — lowered; ``what`` names it in the error ("prefix", "key")."""
+    if not s:
+        if what == "prefix":
+            raise EmptyPrefixError("Tagged URN prefix cannot be empty")
+        raise EmptyTagComponentError(f"empty {what}")
+    for pos, c in enumerate(s):
+        allowed = _is_identifier_start(c) if pos == 0 else _is_valid_key_char(c)
+        if not allowed:
+            raise InvalidCharacterError(f"invalid character '{c}' in {what} at position {pos}")
+    return s.lower()
+
+
+def _check_constraint(key: str, constraint: Constraint) -> None:
+    """Refuse a constraint a URN cannot write for ``key``: anything but the
+    model's forms, ``ConstraintMissing`` (a key with no constraint is omitted),
+    or an empty value."""
+    if not isinstance(constraint, Constraint) or isinstance(constraint, ConstraintMissing):
+        raise InvalidTagFormatError(
+            f"key '{key}' given {constraint!r}: a tag's value is a constraint, and a key with "
+            f"no constraint is omitted")
+    if isinstance(constraint, (ConstraintExact, ConstraintOptionalNot, ConstraintPresentNot)) \
+            and not constraint.value:
+        raise EmptyTagComponentError(f"empty value for key '{key}'")
+
+
+def _is_valid_unquoted_value_char(c: str) -> bool:
+    """Whether ``c`` may stand in an unquoted value: anything but the separators
+    ``;`` ``=``, the quoting characters ``"`` ``\``, and whitespace."""
+    return c not in ';="\\' and not c.isspace()
+
+
+def _ascii_lower(c: str) -> str:
+    """An ASCII letter lowered, any other character as it is: unquoted values are
+    lowered so."""
+    return c.lower() if 'A' <= c <= 'Z' else c
+
+
+def _needs_quoting(value: str) -> bool:
+    """Whether a value must be quoted to read back as itself: it holds a
+    character a bare value cannot, an uppercase letter (a bare value is
+    lowered), or begins with ``*``, ``?`` or ``!`` (which a bare value reads as
+    a sigil or a qualifier)."""
+    return any(not _is_valid_unquoted_value_char(c) or c.isupper() for c in value) \
+        or value.startswith(('*', '?', '!'))
+
+
+def _quote_value(value: str) -> str:
+    """Quote a value for serialization"""
+    result = '"'
+    for c in value:
+        if c in ('"', '\\'):
+            result += '\\'
+        result += c
+    result += '"'
+    return result
+
+
+def _write_value(value: str) -> str:
+    """A value as it is written: bare, or quoted when it must be."""
+    return _quote_value(value) if _needs_quoting(value) else value
+
+
+def _qualified(qualifier: Optional[str], value: str) -> Constraint:
+    """The constraint a value writes under a qualifier (or none)."""
+    if qualifier is None:
+        return ConstraintExact(value)
+    if qualifier == '?':
+        return ConstraintOptionalNot(value)
+    if qualifier == '!':
+        return ConstraintPresentNot(value)
+    raise AssertionError(f"invalid qualifier {qualifier!r}")
+
+
+def _refuse_sigil_under_qualifier(qualifier: str, key: str, value: str) -> None:
+    """A qualifier and a sigil (``*``, ``?``, ``!``) make incompatible claims."""
+    if value in ("*", "?", "!"):
+        raise InvalidCharacterError(
+            f"qualifier '{qualifier}' on key '{key}' cannot combine with sigil "
+            f"value '{value}': use a real value or drop the qualifier"
+        )
+
+
+def _canonical_no_value(qualifier: Optional[str]) -> Constraint:
+    """The constraint of a value-less tag, given its qualifier."""
+    if qualifier is None:
+        return ConstraintPresent()
+    if qualifier == '?':
+        return ConstraintUnconstrained()
+    if qualifier == '!':
+        return ConstraintAbsent()
+    raise AssertionError(f"invalid qualifier {qualifier!r}")
+
+
+def _canonicalize_value(qualifier: Optional[str], quoted: bool, key: str, value: str) -> Constraint:
+    """The constraint a parsed (qualifier, value) pair writes.
+
+    A quoted value is literal: exact, or optionalNot/presentNot under a
+    qualifier. An unquoted ``*``, ``?`` or ``!`` is a sigil; an unquoted value
+    that begins with ``?`` or ``!`` is that qualifier (``x=?v`` ≡ ``x?=v``). A
+    qualifier on an unquoted sigil, or a second qualifier, is refused.
+    """
+    if not value:
+        raise EmptyTagComponentError(f"empty value for key '{key}'")
+    if quoted:
+        return _qualified(qualifier, value)
+    if qualifier is None:
+        if value == "*":
+            return ConstraintPresent()
+        if value == "?":
+            return ConstraintUnconstrained()
+        if value == "!":
+            return ConstraintAbsent()
+        if value[0] in "?!":
+            rest = value[1:]
+            _refuse_sigil_under_qualifier(value[0], key, rest)
+            return _qualified(value[0], rest)
+        return ConstraintExact(value)
+    if len(value) > 1 and value[0] in "?!":
+        raise InvalidCharacterError(
+            f"qualifier '{qualifier}' on key '{key}' cannot combine with a second qualifier "
+            f"in value '{value}': quote the value to make it literal"
+        )
+    _refuse_sigil_under_qualifier(qualifier, key, value)
+    return _qualified(qualifier, value)
+
+
 class TaggedUrn:
     """A tagged URN using flat, ordered tags with a configurable prefix
 
@@ -199,13 +299,22 @@ class TaggedUrn:
     - `custom:a=1;b=2`
     """
 
-    def __init__(self, prefix: str, tags: Dict[str, str]):
-        """Create a new tagged URN from tags with a specified prefix
+    def __init__(self, prefix: str, tags: Dict[str, Constraint]):
+        """Create a tagged URN from a prefix and its tags.
 
-        Keys are normalized to lowercase; values are preserved as-is
+        The prefix and every key must be identifiers (an ASCII letter, then
+        ASCII letters, digits and ``-``) and are lowered; every constraint
+        must be one a URN can write (not ``ConstraintMissing``, no empty value).
         """
-        self._prefix = prefix.lower()
-        self._tags = {k.lower(): v for k, v in tags.items()}
+        self._prefix = _identifier("prefix", prefix)
+        normalized: Dict[str, Constraint] = {}
+        for k, v in tags.items():
+            key = _identifier("key", k)
+            _check_constraint(key, v)
+            if key in normalized:
+                raise DuplicateKeyError(f"Duplicate tag key: {key}")
+            normalized[key] = v
+        self._tags = normalized
         # The same URN on the proved model's side: its tags with the proof that
         # their keys are strictly increasing. Every semantic question is asked
         # of it. Made here from the same tags as the fields, which are read-only
@@ -213,7 +322,7 @@ class TaggedUrn:
         # strings by code point, as Lean's String < does, so the model refusing
         # the sorted keys is a broken invariant.
         keys = sorted(self._tags)
-        formal = _formal.make(self._prefix, [(k, _constraint_of(self._tags[k])) for k in keys])
+        formal = _formal.make(self._prefix, [(k, self._tags[k]) for k in keys])
         if formal is None:
             raise RuntimeError(f"tagged-urn: the model refused {self._prefix}:{keys}, whose keys are sorted")
         self._formal = formal
@@ -224,8 +333,8 @@ class TaggedUrn:
         return self._prefix
 
     @property
-    def tags(self) -> Mapping[str, str]:
-        """The tags, as stored values (``*``, ``?``, ``!``, ``?=v``, ``!=v``, or an exact value), read-only."""
+    def tags(self) -> Mapping[str, Constraint]:
+        """The tags, each as the constraint it writes, read-only."""
         return MappingProxyType(self._tags)
 
     @property
@@ -270,9 +379,9 @@ class TaggedUrn:
         if colon_pos == 0:
             raise EmptyPrefixError("Tagged URN prefix cannot be empty")
 
-        prefix = s[:colon_pos].lower()
+        prefix = _identifier("prefix", s[:colon_pos])
         tags_part = s[colon_pos + 1:]
-        tags: Dict[str, str] = {}
+        tags: Dict[str, Constraint] = {}
 
         # Handle empty tagged URN (prefix: with no tags)
         if not tags_part or tags_part == ";":
@@ -287,24 +396,10 @@ class TaggedUrn:
         chars = list(tags_part)
         pos = 0
 
-        def canonical_no_value(q: Optional[str]) -> str:
-            if q is None:
-                return "*"
-            if q == '?':
-                return "?"
-            if q == '!':
-                return "!"
-            raise AssertionError(f"invalid qualifier {q!r}")
-
-        def canonicalize_value(q: Optional[str], key: str, value: str) -> str:
-            if q is None:
-                return value
-            if value in ("*", "?", "!"):
-                raise InvalidCharacterError(
-                    f"qualifier '{q}' on key '{key}' cannot combine with sigil "
-                    f"value '{value}': use a real value or drop the qualifier"
-                )
-            return f"{q}={value}"
+        def finish(constraint: Constraint) -> None:
+            if current_key in tags:
+                raise DuplicateKeyError(f"Duplicate tag key: {current_key}")
+            tags[current_key] = constraint
 
         while pos < len(chars):
             c = chars[pos]
@@ -319,14 +414,14 @@ class TaggedUrn:
                 elif c == '!':
                     qualifier = '!'
                     state = ParseState.AFTER_PREFIX_BANG
-                elif cls._is_valid_key_char(c):
+                elif _is_identifier_start(c):
                     current_key += c.lower()
                     state = ParseState.IN_KEY
                 else:
                     raise InvalidCharacterError(f"invalid character '{c}' at position {pos}")
 
             elif state in (ParseState.AFTER_PREFIX_QUESTION, ParseState.AFTER_PREFIX_BANG):
-                if cls._is_valid_key_char(c):
+                if _is_identifier_start(c):
                     current_key += c.lower()
                     state = ParseState.IN_KEY
                 else:
@@ -336,8 +431,6 @@ class TaggedUrn:
 
             elif state == ParseState.IN_KEY:
                 if c == '=':
-                    if not current_key:
-                        raise EmptyTagComponentError("empty key")
                     state = ParseState.EXPECTING_VALUE
                 elif c == '?':
                     if qualifier is not None:
@@ -356,15 +449,12 @@ class TaggedUrn:
                     qualifier = '!'
                     state = ParseState.IN_KEY_AFTER_BANG
                 elif c == ';':
-                    if not current_key:
-                        raise EmptyTagComponentError("empty key")
-                    current_value = canonical_no_value(qualifier)
-                    cls._finish_tag(tags, current_key, current_value)
+                    finish(_canonical_no_value(qualifier))
                     current_key = ""
                     current_value = ""
                     qualifier = None
                     state = ParseState.EXPECTING_KEY
-                elif cls._is_valid_key_char(c):
+                elif _is_valid_key_char(c):
                     current_key += c.lower()
                 else:
                     raise InvalidCharacterError(f"invalid character '{c}' in key at position {pos}")
@@ -373,8 +463,7 @@ class TaggedUrn:
                 if c == '=':
                     state = ParseState.EXPECTING_VALUE
                 elif c == ';':
-                    current_value = canonical_no_value(qualifier)
-                    cls._finish_tag(tags, current_key, current_value)
+                    finish(_canonical_no_value(qualifier))
                     current_key = ""
                     current_value = ""
                     qualifier = None
@@ -390,22 +479,21 @@ class TaggedUrn:
                     state = ParseState.IN_QUOTED_VALUE
                 elif c == ';':
                     raise EmptyTagComponentError(f"empty value for key '{current_key}'")
-                elif cls._is_valid_unquoted_value_char(c):
-                    current_value += c.lower()
+                elif _is_valid_unquoted_value_char(c):
+                    current_value += _ascii_lower(c)
                     state = ParseState.IN_UNQUOTED_VALUE
                 else:
                     raise InvalidCharacterError(f"invalid character '{c}' in value at position {pos}")
 
             elif state == ParseState.IN_UNQUOTED_VALUE:
                 if c == ';':
-                    current_value = canonicalize_value(qualifier, current_key, current_value)
-                    cls._finish_tag(tags, current_key, current_value)
+                    finish(_canonicalize_value(qualifier, False, current_key, current_value))
                     current_key = ""
                     current_value = ""
                     qualifier = None
                     state = ParseState.EXPECTING_KEY
-                elif cls._is_valid_unquoted_value_char(c):
-                    current_value += c.lower()
+                elif _is_valid_unquoted_value_char(c):
+                    current_value += _ascii_lower(c)
                 else:
                     raise InvalidCharacterError(f"invalid character '{c}' in unquoted value at position {pos}")
 
@@ -428,8 +516,7 @@ class TaggedUrn:
 
             elif state == ParseState.EXPECTING_SEMI_OR_END:
                 if c == ';':
-                    current_value = canonicalize_value(qualifier, current_key, current_value)
-                    cls._finish_tag(tags, current_key, current_value)
+                    finish(_canonicalize_value(qualifier, True, current_key, current_value))
                     current_key = ""
                     current_value = ""
                     qualifier = None
@@ -442,9 +529,10 @@ class TaggedUrn:
             pos += 1
 
         # Handle end of input
-        if state in (ParseState.IN_UNQUOTED_VALUE, ParseState.EXPECTING_SEMI_OR_END):
-            current_value = canonicalize_value(qualifier, current_key, current_value)
-            cls._finish_tag(tags, current_key, current_value)
+        if state == ParseState.IN_UNQUOTED_VALUE:
+            finish(_canonicalize_value(qualifier, False, current_key, current_value))
+        elif state == ParseState.EXPECTING_SEMI_OR_END:
+            finish(_canonicalize_value(qualifier, True, current_key, current_value))
         elif state == ParseState.EXPECTING_KEY:
             pass
         elif state in (ParseState.IN_QUOTED_VALUE, ParseState.IN_QUOTED_VALUE_ESCAPE):
@@ -453,113 +541,48 @@ class TaggedUrn:
             raise EmptyTagComponentError(
                 f"qualifier '{qualifier}' at end of input has no key"
             )
-        elif state == ParseState.IN_KEY:
-            if not current_key:
-                raise EmptyTagComponentError("empty key")
-            current_value = canonical_no_value(qualifier)
-            cls._finish_tag(tags, current_key, current_value)
-        elif state in (ParseState.IN_KEY_AFTER_QUESTION, ParseState.IN_KEY_AFTER_BANG):
-            current_value = canonical_no_value(qualifier)
-            cls._finish_tag(tags, current_key, current_value)
+        elif state in (ParseState.IN_KEY, ParseState.IN_KEY_AFTER_QUESTION, ParseState.IN_KEY_AFTER_BANG):
+            finish(_canonical_no_value(qualifier))
         elif state == ParseState.EXPECTING_VALUE:
             raise EmptyTagComponentError(f"empty value for key '{current_key}'")
 
         return cls(prefix, tags)
 
-    @staticmethod
-    def _finish_tag(tags: Dict[str, str], key: str, value: str) -> None:
-        """Finish a tag by validating and inserting it"""
-        if not key:
-            raise EmptyTagComponentError("empty key")
-        if not value:
-            raise EmptyTagComponentError(f"empty value for key '{key}'")
-
-        # Check for duplicate keys
-        if key in tags:
-            raise DuplicateKeyError(f"Duplicate tag key: {key}")
-
-        # Validate key cannot be purely numeric
-        if TaggedUrn._is_purely_numeric(key):
-            raise NumericKeyError(f"Tag key cannot be purely numeric: {key}")
-
-        tags[key] = value
-
-    @staticmethod
-    def _is_valid_key_char(c: str) -> bool:
-        """Check if character is valid for a key"""
-        return c.isalnum() or c in ('_', '-', '/', ':', '.')
-
-    @staticmethod
-    def _is_valid_unquoted_value_char(c: str) -> bool:
-        """Check if character is valid for an unquoted value"""
-        return c.isalnum() or c in ('_', '-', '/', ':', '.', '*', '?', '!')
-
-    @staticmethod
-    def _is_purely_numeric(s: str) -> bool:
-        """Check if a string is purely numeric"""
-        return bool(s) and s.isdigit()
-
-    @staticmethod
-    def _needs_quoting(value: str) -> bool:
-        """Check if a value needs quoting for serialization"""
-        return any(c in (';', '=', '"', '\\', ' ') or c.isupper() for c in value)
-
-    @staticmethod
-    def _quote_value(value: str) -> str:
-        """Quote a value for serialization"""
-        result = '"'
-        for c in value:
-            if c in ('"', '\\'):
-                result += '\\'
-            result += c
-        result += '"'
-        return result
-
     def tags_to_string(self) -> str:
-        """Serialize just the tags portion (without prefix)
+        """Serialize just the tags portion (without prefix): the tags in key
+        order, each in its canonical form, joined by ``;``.
 
-        Returns the tags in canonical form with proper quoting and
-        sorting. Stored values map to emitted forms:
+        +--------------------+--------------+
+        | Constraint         | Emitted      |
+        +====================+==============+
+        | present            | ``k``        |
+        | unconstrained      | ``?k``       |
+        | absent             | ``!k``       |
+        | optionalNot v      | ``k?=v``     |
+        | presentNot v       | ``k!=v``     |
+        | exact v            | ``k=v``      |
+        +--------------------+--------------+
 
-        +--------------------+--------------+----------------------------+
-        | Stored value       | Emitted      | Form                       |
-        +====================+==============+============================+
-        | ``"*"``            | ``k``        | bare key (must-have-any)   |
-        | ``"?"``            | ``?k``       | prefix qualifier (no constraint) |
-        | ``"!"``            | ``!k``       | prefix qualifier (must-not-have) |
-        | ``"?=v"``          | ``k?=v``     | infix qualifier (absent or not v) |
-        | ``"!=v"``          | ``k!=v``     | infix qualifier (present and not v) |
-        | other ``v``        | ``k=v``      | exact value (with quoting if needed) |
-        +--------------------+--------------+----------------------------+
+        A value is quoted only when it must be to read back as itself:
+        exact ``*`` prints ``k="*"``.
         """
-        sorted_tags = sorted(self.tags.items())
-
-        tags_str_list = []
-        for k, v in sorted_tags:
-            if v == "*":
-                tags_str_list.append(k)
-            elif v == "?":
-                tags_str_list.append(f"?{k}")
-            elif v == "!":
-                tags_str_list.append(f"!{k}")
-            elif v.startswith("?="):
-                raw = v[2:]
-                if self._needs_quoting(raw):
-                    tags_str_list.append(f"{k}?={self._quote_value(raw)}")
-                else:
-                    tags_str_list.append(f"{k}?={raw}")
-            elif v.startswith("!="):
-                raw = v[2:]
-                if self._needs_quoting(raw):
-                    tags_str_list.append(f"{k}!={self._quote_value(raw)}")
-                else:
-                    tags_str_list.append(f"{k}!={raw}")
-            elif self._needs_quoting(v):
-                tags_str_list.append(f"{k}={self._quote_value(v)}")
+        parts = []
+        for k, c in sorted(self._tags.items()):
+            if isinstance(c, ConstraintPresent):
+                parts.append(k)
+            elif isinstance(c, ConstraintUnconstrained):
+                parts.append(f"?{k}")
+            elif isinstance(c, ConstraintAbsent):
+                parts.append(f"!{k}")
+            elif isinstance(c, ConstraintOptionalNot):
+                parts.append(f"{k}?={_write_value(c.value)}")
+            elif isinstance(c, ConstraintPresentNot):
+                parts.append(f"{k}!={_write_value(c.value)}")
+            elif isinstance(c, ConstraintExact):
+                parts.append(f"{k}={_write_value(c.value)}")
             else:
-                tags_str_list.append(f"{k}={v}")
-
-        return ";".join(tags_str_list)
+                raise AssertionError(f"tagged-urn: stored constraint {c!r}")
+        return ";".join(parts)
 
     def to_string(self) -> str:
         """Get the canonical string representation of this tagged URN."""
@@ -576,47 +599,35 @@ class TaggedUrn:
         """Get the prefix of this tagged URN"""
         return self.prefix
 
-    def get_tag(self, key: str) -> Optional[str]:
-        """Get a specific tag value
+    def get_tag(self, key: str) -> Optional[Constraint]:
+        """The constraint the URN writes for ``key``, or None when it does not
+        mention it. Key is normalized to lowercase for lookup."""
+        return self._tags.get(key.lower())
 
-        Key is normalized to lowercase for lookup
-        """
-        return self.tags.get(key.lower())
+    def constraint(self, key: str) -> Constraint:
+        """The constraint the URN writes for ``key``, ``ConstraintMissing`` when
+        it does not mention it: the model's form of the key."""
+        return self._tags.get(key.lower(), ConstraintMissing())
 
     def has_tag(self, key: str, value: str) -> bool:
-        """Check if this URN has a specific tag with a specific value
-
-        Key is normalized to lowercase; value comparison is case-sensitive
-        """
-        return self.tags.get(key.lower()) == value
+        """Whether this URN writes the exact value ``value`` for ``key``
+        (``key=value``). Key is normalized to lowercase; value comparison is
+        case-sensitive."""
+        return self._tags.get(key.lower()) == ConstraintExact(value)
 
     def has_marker_tag(self, tag_name: str) -> bool:
-        """Check whether a marker tag (a tag whose value is "*") is present.
+        """Whether ``tag_name`` is present as a marker (``ConstraintPresent``,
+        written as just the key). Example: ``cap:constrained;...`` has marker
+        tag "constrained"."""
+        return self._tags.get(tag_name.lower()) == ConstraintPresent()
 
-        Equivalent to has_tag(tag_name, "*") but expresses authorial intent:
-        this tag is present as a marker (a wildcard-valued tag that
-        serializes as just the key), not as a key=value pair.
-        Example: ``cap:constrained;...`` has marker tag "constrained".
-        """
-        return self.tags.get(tag_name.lower()) == "*"
-
-    def with_tag(self, key: str, value: str) -> 'TaggedUrn':
-        """Add or update a tag
-
-        Key is normalized to lowercase; value is preserved as-is
-        Returns error if value is empty (use "*" for wildcard)
-        """
-        if not value:
-            raise EmptyTagComponentError(f"empty value for key '{key}' (use '*' for wildcard)")
-
-        new_tags = self.tags.copy()
-        new_tags[key.lower()] = value
-        return TaggedUrn(self.prefix, new_tags)
-
-    def _with_tag_unchecked(self, key: str, value: str) -> 'TaggedUrn':
-        """Add or update a tag (infallible version for internal use where value is known valid)"""
-        new_tags = self.tags.copy()
-        new_tags[key.lower()] = value
+    def with_tag(self, key: str, constraint: Constraint) -> 'TaggedUrn':
+        """Add or replace a tag. The key must be an identifier and is lowered;
+        the constraint must be one a URN can write."""
+        key = _identifier("key", key)
+        _check_constraint(key, constraint)
+        new_tags = dict(self._tags)
+        new_tags[key] = constraint
         return TaggedUrn(self.prefix, new_tags)
 
     def without_tag(self, key: str) -> 'TaggedUrn':
@@ -624,7 +635,7 @@ class TaggedUrn:
 
         Key is normalized to lowercase for case-insensitive removal
         """
-        new_tags = self.tags.copy()
+        new_tags = dict(self._tags)
         new_tags.pop(key.lower(), None)
         return TaggedUrn(self.prefix, new_tags)
 
@@ -712,10 +723,11 @@ class TaggedUrn:
 
         Made by the model (``TaggedUrn.Exec.leastUpperBound``), whose theorems
         say every input conforms to the bound and the bound conforms to every
-        such bound of them. Every URN must have the prefix; another raises
-        ``PrefixMismatchError``.
+        such bound of them, and no tag of it is ``ConstraintMissing``. The
+        prefix must be an identifier, and every URN must have it; another
+        raises ``PrefixMismatchError``.
         """
-        prefix = prefix.lower()
+        prefix = _identifier("prefix", prefix)
         tags = _formal.least_upper_bound(prefix, [u._formal for u in urns])
         if tags is None:
             other = next((u for u in urns if u.prefix != prefix), None)
@@ -730,57 +742,28 @@ class TaggedUrn:
         if a.prefix != b.prefix:
             raise PrefixMismatchError(a.prefix, b.prefix)
 
-    # Form classification — used by the specificity tuple.
-    _FORM_MISSING = 0
-    _FORM_NO_CONSTRAINT = 1   # "?"
-    _FORM_ABSENT_OR_NOT_VALUE = 2  # "?=v"
-    _FORM_MUST_HAVE_ANY = 3   # "*"
-    _FORM_PRESENT_NOT_VALUE = 4  # "!=v"
-    _FORM_EXACT = 5
-    _FORM_MUST_NOT_HAVE = 6   # "!"
-
     @staticmethod
-    def _classify_form(value: Optional[str]) -> Tuple[int, str]:
-        """Classify a stored tag value into one of seven canonical
-        forms (six explicit + Missing). Returns (kind, raw value) —
-        raw is the inner v for ``?=v`` and ``!=v``, the literal
-        value for exact, and the empty string for sigil-only forms.
-        """
-        if value is None:
-            return (TaggedUrn._FORM_MISSING, "")
-        if value == "?":
-            return (TaggedUrn._FORM_NO_CONSTRAINT, "")
-        if value == "*":
-            return (TaggedUrn._FORM_MUST_HAVE_ANY, "")
-        if value == "!":
-            return (TaggedUrn._FORM_MUST_NOT_HAVE, "")
-        if value.startswith("?="):
-            return (TaggedUrn._FORM_ABSENT_OR_NOT_VALUE, value[2:])
-        if value.startswith("!="):
-            return (TaggedUrn._FORM_PRESENT_NOT_VALUE, value[2:])
-        return (TaggedUrn._FORM_EXACT, value)
-
-    @staticmethod
-    def _values_match(inst: Optional[str], patt: Optional[str]) -> bool:
-        """Whether an instance value satisfies a pattern constraint at one key
-        (None for a key the URN omits), as the model decides it.
+    def _values_match(inst: Constraint, patt: Constraint) -> bool:
+        """Whether an instance's constraint satisfies a pattern's at one key
+        (``ConstraintMissing`` for a key the URN omits, as :meth:`constraint`
+        gives it), as the model decides it.
 
         Every form has ONE meaning — the set of states the key may be in — and
         the instance satisfies the pattern when every state it allows, the
         pattern allows too (``tagMatch_iff_allows`` in ``formal/``).
         """
-        return _formal.values_match(_constraint_of(inst), _constraint_of(patt))
+        return _formal.values_match(inst, patt)
 
     @staticmethod
-    def _values_meet(a: Optional[str], b: Optional[str]) -> bool:
-        """Whether two stored values allow a common state at one key."""
-        return _formal.values_meet(_constraint_of(a), _constraint_of(b))
+    def _values_meet(a: Constraint, b: Constraint) -> bool:
+        """Whether two constraints allow a common state at one key."""
+        return _formal.values_meet(a, b)
 
     @staticmethod
-    def _values_match_closed(inst: Optional[str], patt: Optional[str]) -> bool:
+    def _values_match_closed(inst: Constraint, patt: Constraint) -> bool:
         """One key of a complete thing against a pattern: an omitted key is
         absent."""
-        return _formal.values_match_closed(_constraint_of(inst), _constraint_of(patt))
+        return _formal.values_match_closed(inst, patt)
 
     def conforms_to_str(self, pattern_str: str) -> bool:
         """Check if this URN (instance) satisfies a string pattern's constraints."""
@@ -795,42 +778,22 @@ class TaggedUrn:
     def specificity(self) -> int:
         """Calculate specificity score for URN matching, as the model computes it.
 
-        Sum of the per-tag truth-table score across every tag. See
-        :func:`score_tag_value` for the per-tag ladder.
+        Sum of the per-tag truth-table score across every tag: ``?x`` 0,
+        ``x?=v`` 1, ``x`` 2, ``x!=v`` 3, ``x=v`` 4, ``!x`` 5.
         """
         return _formal.specificity(self._formal)
 
     def specificity_tuple(self) -> Tuple[int, int, int, int, int]:
-        """Get specificity as a tuple for tie-breaking.
-
-        Counts how many tags fall into each non-zero form bucket,
-        ordered from highest score to lowest:
-
-            (must_not_have, exact, present_not_value, must_have_any, absent_or_not_value)
-
-        Compare tuples lexicographically when sum scores are equal.
-        """
-        must_not_have = 0
-        exact = 0
-        present_not_value = 0
-        must_have_any = 0
-        absent_or_not_value = 0
-
-        for v in self.tags.values():
-            kind, _ = TaggedUrn._classify_form(v)
-            if kind == TaggedUrn._FORM_MUST_NOT_HAVE:
-                must_not_have += 1
-            elif kind == TaggedUrn._FORM_EXACT:
-                exact += 1
-            elif kind == TaggedUrn._FORM_PRESENT_NOT_VALUE:
-                present_not_value += 1
-            elif kind == TaggedUrn._FORM_MUST_HAVE_ANY:
-                must_have_any += 1
-            elif kind == TaggedUrn._FORM_ABSENT_OR_NOT_VALUE:
-                absent_or_not_value += 1
-            # _FORM_NO_CONSTRAINT and _FORM_MISSING contribute nothing
-
-        return (must_not_have, exact, present_not_value, must_have_any, absent_or_not_value)
+        """How many tags fall into each non-zero form, from the highest score
+        to the lowest: ``(absent, exact, present_not, present, optional_not)``."""
+        counts = {ConstraintAbsent: 0, ConstraintExact: 0, ConstraintPresentNot: 0,
+                  ConstraintPresent: 0, ConstraintOptionalNot: 0}
+        for c in self._tags.values():
+            if isinstance(c, ConstraintUnconstrained):
+                continue
+            counts[type(c)] += 1
+        return (counts[ConstraintAbsent], counts[ConstraintExact], counts[ConstraintPresentNot],
+                counts[ConstraintPresent], counts[ConstraintOptionalNot])
 
     def is_more_specific_than(self, other: 'TaggedUrn') -> bool:
         """Check if this URN is more specific than another"""
@@ -907,8 +870,8 @@ class TaggedUrn:
         else:
             relation_kind = TaggedUrnRelationKind.INCOMPARABLE
 
-        removed: Dict[str, str] = {}
-        added: Dict[str, str] = {}
+        removed: Dict[str, Constraint] = {}
+        added: Dict[str, Constraint] = {}
         all_keys = set(base.tags.keys()) | set(self.tags.keys())
         for key in all_keys:
             base_value = base.tags.get(key)
@@ -929,25 +892,28 @@ class TaggedUrn:
         if self.prefix != delta.prefix:
             raise PrefixMismatchError(delta.prefix, self.prefix)
 
-        next_tags = self.tags.copy()
+        next_tags = dict(self._tags)
         for key in delta.removed:
             next_tags.pop(key, None)
         next_tags.update(delta.added)
         return TaggedUrn(self.prefix, next_tags)
 
     def with_wildcard_tag(self, key: str) -> 'TaggedUrn':
-        """Create a wildcard version by replacing specific values with wildcards"""
-        if key in self.tags:
-            return self._with_tag_unchecked(key, "*")
-        else:
+        """The same URN with ``key``, where it has it, made a marker (present)."""
+        key = key.lower()
+        if key not in self._tags:
             return self
+        new_tags = dict(self._tags)
+        new_tags[key] = ConstraintPresent()
+        return TaggedUrn(self.prefix, new_tags)
 
     def subset(self, keys: List[str]) -> 'TaggedUrn':
         """Create a subset URN with only specified tags"""
         new_tags = {}
         for key in keys:
-            if key in self.tags:
-                new_tags[key] = self.tags[key]
+            key = key.lower()
+            if key in self._tags:
+                new_tags[key] = self._tags[key]
         return TaggedUrn(self.prefix, new_tags)
 
     def merge(self, other: 'TaggedUrn') -> 'TaggedUrn':
@@ -958,7 +924,7 @@ class TaggedUrn:
         if self.prefix != other.prefix:
             raise PrefixMismatchError(self.prefix, other.prefix)
 
-        new_tags = self.tags.copy()
+        new_tags = dict(self._tags)
         new_tags.update(other.tags)
         return TaggedUrn(self.prefix, new_tags)
 
@@ -1037,28 +1003,34 @@ class UrnMatcher:
         return False
 
 
+
 class TaggedUrnBuilder:
     """Builder for creating tagged URNs fluently"""
 
     def __init__(self, prefix: str):
-        """Create a new builder with a specified prefix (required)"""
-        self.prefix = prefix.lower()
-        self.tags: Dict[str, str] = {}
+        """Create a new builder with a specified prefix (required), which must
+        be an identifier and is lowered."""
+        self.prefix = _identifier("prefix", prefix)
+        self.tags: Dict[str, Constraint] = {}
+
+    def constraint(self, key: str, constraint: Constraint) -> 'TaggedUrnBuilder':
+        """Add a tag of any form. The key must be an identifier and is lowered;
+        the constraint must be one a URN can write."""
+        key = _identifier("key", key)
+        _check_constraint(key, constraint)
+        if key in self.tags:
+            raise DuplicateKeyError(f"Duplicate tag key: {key}")
+        self.tags[key] = constraint
+        return self
 
     def tag(self, key: str, value: str) -> 'TaggedUrnBuilder':
-        """Add a tag with key (normalized to lowercase) and value (preserved as-is)
-
-        Returns error if value is empty (use "*" for wildcard)
-        """
-        if not value:
-            raise EmptyTagComponentError(f"empty value for key '{key}' (use '*' for wildcard)")
-        self.tags[key.lower()] = value
-        return self
+        """Add the exact value ``value`` for ``key`` (``key=value``), taken
+        literally: ``tag("x", "*")`` is the exact value ``*``, not the marker."""
+        return self.constraint(key, ConstraintExact(value))
 
     def marker(self, key: str) -> 'TaggedUrnBuilder':
-        """Add a tag with key (normalized to lowercase) and wildcard value"""
-        self.tags[key.lower()] = "*"
-        return self
+        """Add ``key`` as a marker (present, written as just the key)."""
+        return self.constraint(key, ConstraintPresent())
 
     def build(self) -> TaggedUrn:
         """Build the tagged URN
