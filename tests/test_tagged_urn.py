@@ -1504,3 +1504,17 @@ def test_392_least_upper_bound():
 
     with pytest.raises(PrefixMismatchError):
         bound("media:image", "cap:image")
+
+
+# TEST7210: A written tag lets its key be absent exactly when it is !k, ?k or k?=v; a key the URN does not mention says nothing of it, so it allows absence too
+def test_7210_admits_absence_by_form():
+    urn = TaggedUrn.from_string("media:!a;?b;c?=v;d;e=v;f!=v")
+    assert urn.admits_absence("a")
+    assert urn.admits_absence("b")
+    assert urn.admits_absence("c")
+    assert not urn.admits_absence("d")
+    assert not urn.admits_absence("e")
+    assert not urn.admits_absence("f")
+    assert urn.admits_absence("g")
+    # Keys are read as the URN stores them: lowercase.
+    assert urn.admits_absence("A")
