@@ -1638,3 +1638,30 @@ def test_6756_quoted_value_is_literal():
 
     # The builder's exact value is literal too
     assert TaggedUrnBuilder("t").tag("x", "*").build() == star
+
+
+# TEST7241: URNs are ordered by their parts, never their text: the prefix, then each tag in key order by key, then by its constraint's form (unconstrained, optionalNot, present, presentNot, exact, absent), then by its value
+def test_7241_urns_are_ordered_by_their_parts():
+    p = TaggedUrn.from_string
+
+    def before(a, b):
+        assert p(a) < p(b), f"{a} stands before {b}"
+        assert p(b) > p(a), f"{b} stands after {a}"
+
+    # The text orders file-path first; the parts order file first.
+    assert str(p("t:file-path")) < str(p("t:file;sample"))
+    before("t:file;sample", "t:file-path")
+    # The prefix decides first.
+    before("b:z", "c:a")
+    # A URN whose tags are the beginning of another's stands first.
+    before("t:file", "t:file;sample")
+    # One key, each form in the truth table's order.
+    forms = ["t:?x", "t:x?=v", "t:x", "t:x!=v", "t:x=v", "t:!x"]
+    for earlier, later in zip(forms, forms[1:]):
+        before(earlier, later)
+    # One form, values in their own order; a quoted value is a value.
+    before("t:x=ascii", "t:x=utf8")
+    before('t:x="*"', "t:x=a")
+    before("t:x?=a", "t:x?=b")
+    # Writing order is no part of it.
+    assert p("t:b;a").ordering_key() == p("t:a;b").ordering_key()
