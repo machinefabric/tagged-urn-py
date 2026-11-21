@@ -21,9 +21,15 @@ from .tagged_urn import (
     DuplicateKeyError,
     WhitespaceInInputError,
     PrefixMismatchError,
-    NumericKeyError,
     InvalidTagFormatError,
-    score_tag_value,
+    Constraint,
+    ConstraintMissing,
+    ConstraintUnconstrained,
+    ConstraintOptionalNot,
+    ConstraintPresent,
+    ConstraintPresentNot,
+    ConstraintExact,
+    ConstraintAbsent,
 )
 
 # Read from the installed distribution's metadata, never hand-copied: this
@@ -52,7 +58,13 @@ __all__ = [
     "DuplicateKeyError",
     "WhitespaceInInputError",
     "PrefixMismatchError",
-    "NumericKeyError",
     "InvalidTagFormatError",
-    "score_tag_value",
+    "Constraint",
+    "ConstraintMissing",
+    "ConstraintUnconstrained",
+    "ConstraintOptionalNot",
+    "ConstraintPresent",
+    "ConstraintPresentNot",
+    "ConstraintExact",
+    "ConstraintAbsent",
 ]
