@@ -1667,6 +1667,16 @@ def test_7241_urns_are_ordered_by_their_parts():
     assert p("t:b;a").ordering_key() == p("t:a;b").ordering_key()
 
 
+# TEST7223: A URN read back from its model handle is the URN: its prefix and every tag, each form and a quoted value included
+def test_7223_urn_read_back_from_its_handle():
+    for text in ['media:!a;?b;c?=v;d;e=v;f!=v;g="x y"', "cap:", "media:pdf"]:
+        urn = TaggedUrn.from_string(text)
+        back = TaggedUrn.from_formal(urn.formal)
+        assert back.prefix == urn.prefix, text
+        assert dict(back.tags) == dict(urn.tags), text
+        assert back == urn, text
+
+
 # TEST7210: A written tag lets its key be absent exactly when it is !k, ?k or k?=v; a key the URN does not mention says nothing of it, so it allows absence too
 def test_7210_admits_absence_by_form():
     urn = TaggedUrn.from_string("media:!a;?b;c?=v;d;e=v;f!=v")

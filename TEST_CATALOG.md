@@ -2,7 +2,7 @@
 
 Generated from the test catalogue. Edit the tests, not this file.
 
-104 tests: 104 numbered, 0 unnumbered.
+106 tests: 106 numbered, 0 unnumbered.
 
 ## Numbered
 
@@ -111,5 +111,7 @@ Generated from the test catalogue. Edit the tests, not this file.
 | TEST6754 | tagged-urn/tagged-urn-py | python | `test_6754_every_value_reads_back` | tests/test_tagged_urn.py:1588 | TEST6754: Every value a URN holds prints so that it reads back as itself |
 | TEST6755 | tagged-urn/tagged-urn-py | python | `test_6755_unquoted_value_takes_any_non_separator` | tests/test_tagged_urn.py:1600 | TEST6755: An unquoted value takes any character but ; = " \ and whitespace |
 | TEST6756 | tagged-urn/tagged-urn-py | python | `test_6756_quoted_value_is_literal` | tests/test_tagged_urn.py:1617 | TEST6756: A quoted value is the literal value: a quoted *, ? or ! is never a sigil, and a quoted ?=v is never a qualifier |
+| TEST7210 | tagged-urn/tagged-urn-py | python | `test_7210_admits_absence_by_form` | tests/test_tagged_urn.py:1681 | TEST7210: A written tag lets its key be absent exactly when it is !k, ?k or k?=v; a key the URN does not mention says nothing of it, so it allows absence too |
+| TEST7223 | tagged-urn/tagged-urn-py | python | `test_7223_urn_read_back_from_its_handle` | tests/test_tagged_urn.py:1671 | TEST7223: A URN read back from its model handle is the URN: its prefix and every tag, each form and a quoted value included |
 | TEST7241 | tagged-urn/tagged-urn-py | python | `test_7241_urns_are_ordered_by_their_parts` | tests/test_tagged_urn.py:1644 | TEST7241: URNs are ordered by their parts, never their text: the prefix, then each tag in key order by key, then by its constraint's form (unconstrained, optionalNot, present, presentNot, exact, absent), then by its value |
 

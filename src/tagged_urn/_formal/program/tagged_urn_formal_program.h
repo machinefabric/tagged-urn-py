@@ -292,6 +292,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dmeets_d__closed__0(void);
 uint8_t tagged_urn_formal__l_TaggedUrn_dExec_dmeetsClosed(lungo_obj x_1, lungo_obj x_2);
 lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dmeetsClosed_d__boxed(lungo_obj x_1, lungo_obj x_2);
 lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dmeetsClosed_d__closed__0(void);
+lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dparts(lungo_obj x_1);
 uint8_t tagged_urn_formal__l_TaggedUrn_dExec_drefines(lungo_obj x_1, lungo_obj x_2);
 lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_drefines_d__boxed(lungo_obj x_1, lungo_obj x_2);
 uint8_t tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed(lungo_obj x_1, lungo_obj x_2);
@@ -617,6 +618,7 @@ int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dleastUpperBound(const uint8_t
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmake(const uint8_t *input, size_t len, lungo_buffer *out);
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmeets(const uint8_t *input, size_t len, lungo_buffer *out);
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dmeetsClosed(const uint8_t *input, size_t len, lungo_buffer *out);
+int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_dparts(const uint8_t *input, size_t len, lungo_buffer *out);
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefines(const uint8_t *input, size_t len, lungo_buffer *out);
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefinesBothClosed(const uint8_t *input, size_t len, lungo_buffer *out);
 int32_t tagged_urn_formal__call_l_TaggedUrn_dExec_drefinesClosed(const uint8_t *input, size_t len, lungo_buffer *out);
