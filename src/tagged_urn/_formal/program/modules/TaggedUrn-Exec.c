@@ -178,7 +178,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dequivalent_d__boxed(lungo_obj x_
 }
 
 /* Lean: TaggedUrn.Exec.leastUpperBound */
-/* Source: TaggedUrn/Exec.lean:126:1 */
+/* Source: TaggedUrn/Exec.lean:136:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dleastUpperBound(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -206,7 +206,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dleastUpperBound(lungo_obj x_1, l
 
 /* Lean: TaggedUrn.Exec.leastUpperBound._boxed */
 /* Compiled from: TaggedUrn.Exec.leastUpperBound */
-/* Source: TaggedUrn/Exec.lean:126:1 */
+/* Source: TaggedUrn/Exec.lean:136:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dleastUpperBound_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dExec_dleastUpperBound(x_1, x_2);
@@ -401,6 +401,67 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_drefines_d__boxed(lungo_obj x_1, 
     return x_4;
 }
 
+/* Lean: TaggedUrn.Exec.refinesBothClosed */
+/* Source: TaggedUrn/Exec.lean:118:1 */
+uint8_t tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed(lungo_obj x_1, lungo_obj x_2) {
+    lungo_obj x_3;
+    lungo_obj x_4;
+    lungo_obj x_5;
+    lungo_obj x_6;
+    uint8_t x_7;
+    lungo_obj x_8;
+    uint8_t x_9;
+    x_3 = lungo_ctor_get(x_1, 0);
+    lungo_inc_ref(x_3);
+    x_4 = lungo_ctor_get(x_1, 1);
+    lungo_inc(x_4);
+    lungo_dec_ref(x_1);
+    x_5 = lungo_ctor_get(x_2, 0);
+    lungo_inc_ref(x_5);
+    x_6 = lungo_ctor_get(x_2, 1);
+    lungo_inc(x_6);
+    lungo_dec_ref(x_2);
+    x_7 = tagged_urn_formal__l_String_ddecEq(x_3, x_5);
+    lungo_dec_ref(x_5);
+    lungo_dec_ref(x_3);
+    switch (x_7) {
+        case 0: {
+            lungo_dec(x_6);
+            lungo_dec(x_4);
+            return x_7;
+        }
+        default: {
+            x_8 = tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__closed__0();
+            x_9 = tagged_urn_formal__l_TaggedUrn_dmergeWith(x_8, x_4, x_6);
+            return x_9;
+        }
+    }
+}
+
+/* Lean: TaggedUrn.Exec.refinesBothClosed._boxed */
+/* Compiled from: TaggedUrn.Exec.refinesBothClosed */
+/* Source: TaggedUrn/Exec.lean:118:1 */
+lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
+    uint8_t x_3;
+    lungo_obj x_4;
+    x_3 = tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed(x_1, x_2);
+    x_4 = lungo_box((size_t)x_3);
+    return x_4;
+}
+
+/* Lean: TaggedUrn.Exec.refinesBothClosed._closed_0 */
+/* Compiled from: TaggedUrn.Exec.refinesBothClosed */
+/* Source: TaggedUrn/Exec.lean:118:1 */
+static lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__closed__0__init(void) {
+    lungo_obj x_1;
+    x_1 = lungo_alloc_closure((void *)tagged_urn_formal__l_TaggedUrn_dtagMatchBothClosed_d__boxed, 2, 0);
+    return x_1;
+}
+static lungo_lazy_obj tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__closed__0__cell;
+lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__closed__0(void) {
+    return lungo_lazy_obj_get(&tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__closed__0__cell, tagged_urn_formal__l_TaggedUrn_dExec_drefinesBothClosed_d__closed__0__init);
+}
+
 /* Lean: TaggedUrn.Exec.refinesClosed */
 /* Source: TaggedUrn/Exec.lean:97:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dExec_drefinesClosed(lungo_obj x_1, lungo_obj x_2) {
@@ -492,7 +553,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatch_d__boxed(lungo_obj x
 }
 
 /* Lean: TaggedUrn.Exec.valuesMatchClosed */
-/* Source: TaggedUrn/Exec.lean:118:1 */
+/* Source: TaggedUrn/Exec.lean:128:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatchClosed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dtagMatchClosed(x_1, x_2);
@@ -501,7 +562,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatchClosed(lungo_obj x_1, l
 
 /* Lean: TaggedUrn.Exec.valuesMatchClosed._boxed */
 /* Compiled from: TaggedUrn.Exec.valuesMatchClosed */
-/* Source: TaggedUrn/Exec.lean:118:1 */
+/* Source: TaggedUrn/Exec.lean:128:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dExec_dvaluesMatchClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;

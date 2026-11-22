@@ -27,6 +27,7 @@ add_library(tagged_urn_formal_lean SHARED
   program/modules/Init-Data-String-Bootstrap.c
   program/modules/Init-Data-String-Defs.c
   program/modules/Init-Data-String-Iterate.c
+  program/modules/Init-Data-String-Length.c
   program/modules/Init-Data-String-Modify.c
   program/modules/Init-Data-UInt-Basic.c
   program/modules/Init-Data-UInt-BasicAux.c
@@ -42,6 +43,7 @@ add_library(tagged_urn_formal_lean SHARED
   program/modules/TaggedUrn-Constraint.c
   program/modules/TaggedUrn-Exec.c
   program/modules/TaggedUrn-Join.c
+  program/modules/TaggedUrn-Patch.c
   program/modules/TaggedUrn-Sorted.c
   program/modules/TaggedUrn-Urn.c
   program/tagged_urn_formal_boundary.c
