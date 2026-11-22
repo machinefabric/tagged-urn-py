@@ -345,6 +345,15 @@ class TaggedUrn:
         return self._formal
 
     @classmethod
+    def from_formal(cls, formal: _formal.Wf) -> 'TaggedUrn':
+        """The URN a model handle stands for, such as one a module generated from
+        a model that builds on tagged-urn's made. Its prefix, keys and
+        constraints are checked as the constructor checks them
+        (``TaggedUrn.Exec.parts``)."""
+        prefix, tags = _formal.parts(formal)
+        return cls(prefix, dict(tags))
+
+    @classmethod
     def empty(cls, prefix: str) -> 'TaggedUrn':
         """Create an empty tagged URN with the specified prefix"""
         return cls(prefix, {})
