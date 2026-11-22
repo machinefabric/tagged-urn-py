@@ -607,6 +607,33 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dmergeWith_d__boxed(lungo_obj x_1, lung
     return x_5;
 }
 
+/* Lean: TaggedUrn.tagMatchBothClosed */
+/* Source: TaggedUrn/Sorted.lean:338:1 */
+uint8_t tagged_urn_formal__l_TaggedUrn_dtagMatchBothClosed(lungo_obj x_1, lungo_obj x_2) {
+    lungo_obj x_3;
+    lungo_obj x_4;
+    uint8_t x_5;
+    x_3 = tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(x_1);
+    x_4 = tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(x_2);
+    x_5 = tagged_urn_formal__l_TaggedUrn_dtagMatch(x_3, x_4);
+    lungo_dec(x_4);
+    lungo_dec(x_3);
+    return x_5;
+}
+
+/* Lean: TaggedUrn.tagMatchBothClosed._boxed */
+/* Compiled from: TaggedUrn.tagMatchBothClosed */
+/* Source: TaggedUrn/Sorted.lean:338:1 */
+lungo_obj tagged_urn_formal__l_TaggedUrn_dtagMatchBothClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
+    uint8_t x_3;
+    lungo_obj x_4;
+    x_3 = tagged_urn_formal__l_TaggedUrn_dtagMatchBothClosed(x_1, x_2);
+    lungo_dec(x_2);
+    lungo_dec(x_1);
+    x_4 = lungo_box((size_t)x_3);
+    return x_4;
+}
+
 /* Lean: TaggedUrn.tagMatchClosed */
 /* Source: TaggedUrn/Sorted.lean:315:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dtagMatchClosed(lungo_obj x_1, lungo_obj x_2) {

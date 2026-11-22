@@ -1225,6 +1225,87 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefines_d__lam__0_d__boxe
     return x_5;
 }
 
+/* Lean: TaggedUrn.instDecidableRefinesBothClosed */
+/* Source: TaggedUrn/Urn.lean:308:1 */
+uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed(lungo_obj x_1, lungo_obj x_2) {
+    lungo_obj x_3;
+    lungo_obj x_4;
+    uint8_t x_5;
+    lungo_obj x_6;
+    lungo_obj x_7;
+    lungo_obj x_8;
+    lungo_obj x_9;
+    uint8_t x_10;
+    x_3 = lungo_ctor_get(x_1, 0);
+    x_4 = lungo_ctor_get(x_2, 0);
+    x_5 = tagged_urn_formal__l_String_ddecEq(x_3, x_4);
+    switch (x_5) {
+        case 0: {
+            lungo_dec_ref(x_2);
+            lungo_dec_ref(x_1);
+            return x_5;
+        }
+        default: {
+            lungo_inc_ref(x_2);
+            lungo_inc_ref(x_1);
+            x_6 = lungo_alloc_closure((void *)tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0_d__boxed, 3, 2);
+            lungo_closure_set(x_6, 0, x_1);
+            lungo_closure_set(x_6, 1, x_2);
+            x_7 = tagged_urn_formal__l_TaggedUrn_dUrn_dkeys(x_1);
+            x_8 = tagged_urn_formal__l_TaggedUrn_dUrn_dkeys(x_2);
+            x_9 = tagged_urn_formal__l_List_dappendTR_d__redArg(x_7, x_8);
+            x_10 = tagged_urn_formal__l_List_ddecidableBAll_d__redArg(x_6, x_9);
+            return x_10;
+        }
+    }
+}
+
+/* Lean: TaggedUrn.instDecidableRefinesBothClosed._boxed */
+/* Compiled from: TaggedUrn.instDecidableRefinesBothClosed */
+/* Source: TaggedUrn/Urn.lean:308:1 */
+lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
+    uint8_t x_3;
+    lungo_obj x_4;
+    x_3 = tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed(x_1, x_2);
+    x_4 = lungo_box((size_t)x_3);
+    return x_4;
+}
+
+/* Lean: TaggedUrn.instDecidableRefinesBothClosed._lam_0 */
+/* Compiled from: TaggedUrn.instDecidableRefinesBothClosed */
+/* Source: TaggedUrn/Urn.lean:308:1 */
+uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
+    lungo_obj x_4;
+    lungo_obj x_5;
+    lungo_obj x_6;
+    lungo_obj x_7;
+    uint8_t x_8;
+    x_4 = tagged_urn_formal__l_TaggedUrn_dUrn_dtag(x_1, x_3);
+    x_5 = tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(x_4);
+    lungo_dec(x_4);
+    x_6 = tagged_urn_formal__l_TaggedUrn_dUrn_dtag(x_2, x_3);
+    x_7 = tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(x_6);
+    lungo_dec(x_6);
+    x_8 = tagged_urn_formal__l_TaggedUrn_dtagMatch(x_5, x_7);
+    lungo_dec(x_7);
+    lungo_dec(x_5);
+    return x_8;
+}
+
+/* Lean: TaggedUrn.instDecidableRefinesBothClosed._lam_0._boxed */
+/* Compiled from: TaggedUrn.instDecidableRefinesBothClosed */
+/* Source: TaggedUrn/Urn.lean:308:1 */
+lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
+    uint8_t x_4;
+    lungo_obj x_5;
+    x_4 = tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0(x_1, x_2, x_3);
+    lungo_dec_ref(x_3);
+    lungo_dec_ref(x_2);
+    lungo_dec_ref(x_1);
+    x_5 = lungo_box((size_t)x_4);
+    return x_5;
+}
+
 /* Lean: TaggedUrn.instDecidableRefinesClosed */
 /* Source: TaggedUrn/Urn.lean:205:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed(lungo_obj x_1, lungo_obj x_2) {
@@ -1722,7 +1803,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprUrn_drepr_d__redArg_d__closed_
 }
 
 /* Lean: TaggedUrn.tagScore */
-/* Source: TaggedUrn/Urn.lean:299:1 */
+/* Source: TaggedUrn/Urn.lean:357:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_3;
@@ -1760,7 +1841,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.tagScore._boxed */
 /* Compiled from: TaggedUrn.tagScore */
-/* Source: TaggedUrn/Urn.lean:299:1 */
+/* Source: TaggedUrn/Urn.lean:357:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore_d__boxed(lungo_obj x_1) {
     lungo_obj x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dtagScore(x_1);
@@ -1769,7 +1850,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore_d__boxed(lungo_obj x_1) {
 }
 
 /* Lean: TaggedUrn.urnScore */
-/* Source: TaggedUrn/Urn.lean:308:1 */
+/* Source: TaggedUrn/Urn.lean:366:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_durnScore(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_3;
