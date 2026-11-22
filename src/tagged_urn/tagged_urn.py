@@ -621,6 +621,16 @@ class TaggedUrn:
         tag "constrained"."""
         return self._tags.get(tag_name.lower()) == ConstraintPresent()
 
+    def admits_absence(self, key: str) -> bool:
+        """Whether what this URN writes at ``key`` lets the key be absent.
+
+        ``!key``, ``?key`` and ``key?=v`` do, and so does a key the URN does not
+        mention, which says nothing of it; ``key``, ``key=v`` and ``key!=v`` do
+        not. Decided by the model: absence satisfies the constraint
+        (``values_match``).
+        """
+        return _formal.values_match(ConstraintAbsent(), self.constraint(key))
+
     def with_tag(self, key: str, constraint: Constraint) -> 'TaggedUrn':
         """Add or replace a tag. The key must be an identifier and is lowered;
         the constraint must be one a URN can write."""
