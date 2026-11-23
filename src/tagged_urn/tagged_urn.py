@@ -6,24 +6,102 @@ prefixes, wildcard support, and specificity comparison.
 What two URNs mean to each other — refinement, equivalence, comparability,
 specificity, one key's match — is decided by code generated from the proved
 model in ../formal (Lean) by lungo, in the module ``_formal``, not written here.
-Each tag is stored as the constraint it writes, the model's own ``Constraint``.
+Each tag is stored as the constraint it writes, the model's own ``Constraint``:
+``ConstraintWritten`` — whether the key may be absent, and the values it may
+have, one of a set (``ValuesOneOf``) or none of a set (``ValuesNoneOf``) — or
+``ConstraintMissing``, which is never stored.
 """
 
 from enum import Enum
 from types import MappingProxyType
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
 from . import _formal
 from ._formal import (
     Constraint,
-    ConstraintAbsent,
-    ConstraintExact,
     ConstraintMissing,
-    ConstraintOptionalNot,
-    ConstraintPresent,
-    ConstraintPresentNot,
-    ConstraintUnconstrained,
+    ConstraintWritten,
+    Values,
+    ValuesNoneOf,
+    ValuesOneOf,
 )
+
+
+def unconstrained() -> Constraint:
+    """``?k``: any state, absent or any value."""
+    return none_of([], True)
+
+
+def optional_not(value: str) -> Constraint:
+    """``k?=v``: absent, or there and not ``v``."""
+    return none_of([value], True)
+
+
+def present() -> Constraint:
+    """``k``: there, with any value."""
+    return none_of([], False)
+
+
+def present_not(value: str) -> Constraint:
+    """``k!=v``: there, and not ``v``."""
+    return none_of([value], False)
+
+
+def exact(value: str) -> Constraint:
+    """``k=v``: there, and exactly ``v``."""
+    return one_of([value], False)
+
+
+def absent() -> Constraint:
+    """``!k``: not there."""
+    return one_of([], True)
+
+
+def one_of(values: Iterable[str], or_absent: bool) -> Constraint:
+    """``k=a|b``: there, with one of the values; ``k=a|b|!`` when
+    ``or_absent``. The values are kept canonical: each once, in increasing
+    order."""
+    return ConstraintWritten(or_absent, ValuesOneOf(_canonical_values(values)))
+
+
+def none_of(values: Iterable[str], or_absent: bool) -> Constraint:
+    """``k!=a|b``: there, with none of the values; ``k?=a|b`` when
+    ``or_absent``. The values are kept canonical: each once, in increasing
+    order."""
+    return ConstraintWritten(or_absent, ValuesNoneOf(_canonical_values(values)))
+
+
+def canonical_constraint(constraint: Constraint) -> Constraint:
+    """The same constraint with its values canonical, in a list of its own.
+    Two constraints that say the same thing are equal once canonical."""
+    if isinstance(constraint, ConstraintMissing):
+        return ConstraintMissing()
+    if isinstance(constraint, ConstraintWritten):
+        if isinstance(constraint.values, ValuesOneOf):
+            return one_of(constraint.values.vs, constraint.absent)
+        if isinstance(constraint.values, ValuesNoneOf):
+            return none_of(constraint.values.vs, constraint.absent)
+    raise AssertionError(f"tagged-urn: {constraint!r} is not a constraint")
+
+
+def exact_value(constraint: Optional[Constraint]) -> Optional[str]:
+    """The value of ``k=v``, when the constraint is that form."""
+    if isinstance(constraint, ConstraintWritten) and not constraint.absent \
+            and isinstance(constraint.values, ValuesOneOf) and len(constraint.values.vs) == 1:
+        return constraint.values.vs[0]
+    return None
+
+
+def is_empty_form(constraint: Constraint) -> bool:
+    """Whether the constraint allows no state at all. No text writes it."""
+    return isinstance(constraint, ConstraintWritten) and not constraint.absent \
+        and isinstance(constraint.values, ValuesOneOf) and not constraint.values.vs
+
+
+def _canonical_values(values: Iterable[str]) -> List[str]:
+    """Values each once, in increasing order: the order Lean's ``String <``
+    uses (Python orders strings by code point)."""
+    return sorted(set(values))
 
 
 # Error classes
@@ -115,6 +193,11 @@ class WhitespaceInInputError(TaggedUrnError):
     pass
 
 
+class DuplicateValueError(TaggedUrnError):
+    """A value given twice in one tag's set of values"""
+    pass
+
+
 class ParseState(Enum):
     """Parser states for the state machine.
 
@@ -135,6 +218,10 @@ class ParseState(Enum):
     A quoted value is literal: ``x="?v"`` is the exact value ``?v``, and
     ``x="*"`` the exact value ``*``, never the marker.
 
+    A value may be a set of values separated by ``|``
+    (:func:`_canonicalize_set`): ``x=a|b``, ``x!=a|b``, ``x?=a|b``, and
+    ``x=a|b|!`` (absent, or one of them).
+
     Disallowed (hard parse errors): ``?x?``, ``?x?=v``, ``!x!=v``, ``?!x``,
     ``!?x``, ``?x=?v``, ``?x=*``, ``!x=*``, ``x=?*``, ``x=!?``, and an
     empty value.
@@ -150,6 +237,8 @@ class ParseState(Enum):
     IN_QUOTED_VALUE = 9
     IN_QUOTED_VALUE_ESCAPE = 10
     EXPECTING_SEMI_OR_END = 11
+    #: After ``|`` in a value: the next member of a set of values.
+    EXPECTING_VALUE_MEMBER = 12
 
 
 def _is_identifier_start(c: str) -> bool:
@@ -177,22 +266,33 @@ def _identifier(what: str, s: str) -> str:
 
 
 def _check_constraint(key: str, constraint: Constraint) -> None:
-    """Refuse a constraint a URN cannot write for ``key``: anything but the
-    model's forms, ``ConstraintMissing`` (a key with no constraint is omitted),
-    or an empty value."""
-    if not isinstance(constraint, Constraint) or isinstance(constraint, ConstraintMissing):
+    """Refuse a constraint a URN cannot write for ``key``: anything but a
+    ``ConstraintWritten`` whose values are a ``ValuesOneOf`` or ``ValuesNoneOf``
+    of strings, ``ConstraintMissing`` (a key with no constraint is omitted), the
+    empty form (no state at all, which no text writes), or an empty value."""
+    if not isinstance(constraint, ConstraintWritten):
         raise InvalidTagFormatError(
-            f"key '{key}' given {constraint!r}: a tag's value is a constraint, and a key with "
-            f"no constraint is omitted")
-    if isinstance(constraint, (ConstraintExact, ConstraintOptionalNot, ConstraintPresentNot)) \
-            and not constraint.value:
+            f"key '{key}' given {constraint!r}: a tag's value is a written constraint, and a "
+            f"key with no constraint is omitted")
+    values = constraint.values
+    if not isinstance(constraint.absent, bool) \
+            or not isinstance(values, (ValuesOneOf, ValuesNoneOf)) \
+            or not isinstance(values.vs, (list, tuple)) \
+            or not all(isinstance(v, str) for v in values.vs):
+        raise InvalidTagFormatError(
+            f"key '{key}' given {constraint!r}: a written constraint is whether the key may be "
+            f"absent and a ValuesOneOf or ValuesNoneOf of strings")
+    if is_empty_form(constraint):
+        raise InvalidTagFormatError(
+            f"key '{key}' given a constraint no state satisfies: no text writes it")
+    if any(not v for v in values.vs):
         raise EmptyTagComponentError(f"empty value for key '{key}'")
 
 
 def _is_valid_unquoted_value_char(c: str) -> bool:
     """Whether ``c`` may stand in an unquoted value: anything but the separators
-    ``;`` ``=``, the quoting characters ``"`` ``\``, and whitespace."""
-    return c not in ';="\\' and not c.isspace()
+    ``;`` ``=`` ``|``, the quoting characters ``"`` ``\``, and whitespace."""
+    return c not in ';=|"\\' and not c.isspace()
 
 
 def _ascii_lower(c: str) -> str:
@@ -229,11 +329,11 @@ def _write_value(value: str) -> str:
 def _qualified(qualifier: Optional[str], value: str) -> Constraint:
     """The constraint a value writes under a qualifier (or none)."""
     if qualifier is None:
-        return ConstraintExact(value)
+        return exact(value)
     if qualifier == '?':
-        return ConstraintOptionalNot(value)
+        return optional_not(value)
     if qualifier == '!':
-        return ConstraintPresentNot(value)
+        return present_not(value)
     raise AssertionError(f"invalid qualifier {qualifier!r}")
 
 
@@ -249,11 +349,70 @@ def _refuse_sigil_under_qualifier(qualifier: str, key: str, value: str) -> None:
 def _canonical_no_value(qualifier: Optional[str]) -> Constraint:
     """The constraint of a value-less tag, given its qualifier."""
     if qualifier is None:
-        return ConstraintPresent()
+        return present()
     if qualifier == '?':
-        return ConstraintUnconstrained()
+        return unconstrained()
     if qualifier == '!':
-        return ConstraintAbsent()
+        return absent()
+    raise AssertionError(f"invalid qualifier {qualifier!r}")
+
+
+def _finish_value(qualifier: Optional[str], key: str, members: List[Tuple[str, bool]],
+                  last: Tuple[str, bool]) -> Constraint:
+    """The constraint a parsed value writes: a single value as
+    :func:`_canonicalize_value` reads it, or a set of values (``members`` read
+    before the last ``|``, then ``last``, each with whether it was quoted) as
+    :func:`_canonicalize_set` does."""
+    if not members:
+        value, quoted = last
+        return _canonicalize_value(qualifier, quoted, key, value)
+    return _canonicalize_set(qualifier, key, members + [last])
+
+
+def _canonicalize_set(qualifier: Optional[str], key: str, members: List[Tuple[str, bool]]) -> Constraint:
+    """The constraint a set of values writes:
+
+    ============  ==========  =====================  ===============
+    qualifier     members     constraint             written
+    ============  ==========  =====================  ===============
+    None          ``a|b``     one of a, b            ``k=a|b``
+    None          ``a|b|!``   absent, or one of      ``k=a|b|!``
+    ``!``         ``a|b``     there, none of         ``k!=a|b``
+    ``?``         ``a|b``     absent, or none of     ``k?=a|b``
+    ============  ==========  =====================  ===============
+
+    A bare ``!`` member says "or absent", and only in ``k=``. Every other
+    member is a value: a quoted one is literal, and a bare ``*``, ``?``, ``!``
+    under a qualifier, or a bare member beginning with ``?`` or ``!``, is
+    refused — quote it to mean the value itself. A value given twice is
+    refused.
+    """
+    values: List[str] = []
+    or_absent = False
+    for member, quoted in members:
+        if not member:
+            raise EmptyTagComponentError(f"empty value in the set of values for key '{key}'")
+        if not quoted and member == "!" and qualifier is None:
+            if or_absent:
+                raise DuplicateValueError(f"'!' given twice in the set of values for key '{key}'")
+            or_absent = True
+            continue
+        if not quoted and (member == "*" or member.startswith(("?", "!"))):
+            raise InvalidCharacterError(
+                f"'{member}' cannot stand in the set of values for key '{key}': quote it to mean "
+                f"the value itself"
+            )
+        if member in values:
+            raise DuplicateValueError(f"value '{member}' given twice in the set of values for key '{key}'")
+        values.append(member)
+    if not values:
+        raise EmptyTagComponentError(f"the set of values for key '{key}' names no value")
+    if qualifier is None:
+        return one_of(values, or_absent)
+    if qualifier == '?':
+        return none_of(values, True)
+    if qualifier == '!':
+        return none_of(values, False)
     raise AssertionError(f"invalid qualifier {qualifier!r}")
 
 
@@ -271,16 +430,16 @@ def _canonicalize_value(qualifier: Optional[str], quoted: bool, key: str, value:
         return _qualified(qualifier, value)
     if qualifier is None:
         if value == "*":
-            return ConstraintPresent()
+            return present()
         if value == "?":
-            return ConstraintUnconstrained()
+            return unconstrained()
         if value == "!":
-            return ConstraintAbsent()
+            return absent()
         if value[0] in "?!":
             rest = value[1:]
             _refuse_sigil_under_qualifier(value[0], key, rest)
             return _qualified(value[0], rest)
-        return ConstraintExact(value)
+        return exact(value)
     if len(value) > 1 and value[0] in "?!":
         raise InvalidCharacterError(
             f"qualifier '{qualifier}' on key '{key}' cannot combine with a second qualifier "
@@ -304,7 +463,9 @@ class TaggedUrn:
 
         The prefix and every key must be identifiers (an ASCII letter, then
         ASCII letters, digits and ``-``) and are lowered; every constraint
-        must be one a URN can write (not ``ConstraintMissing``, no empty value).
+        must be one a URN can write (not ``ConstraintMissing``, not the empty
+        form, no empty value), and is kept canonical: its values each once, in
+        increasing order, in a list of its own.
         """
         self._prefix = _identifier("prefix", prefix)
         normalized: Dict[str, Constraint] = {}
@@ -313,7 +474,7 @@ class TaggedUrn:
             _check_constraint(key, v)
             if key in normalized:
                 raise DuplicateKeyError(f"Duplicate tag key: {key}")
-            normalized[key] = v
+            normalized[key] = canonical_constraint(v)
         self._tags = normalized
         # The same URN on the proved model's side: its tags with the proof that
         # their keys are strictly increasing. Every semantic question is asked
@@ -402,6 +563,9 @@ class TaggedUrn:
         # qualifier: None | '?' | '!' — tracked across the tag,
         # reset on each finish_tag.
         qualifier: Optional[str] = None
+        # The members of a set of values read so far (``k=a|b``), each with
+        # whether it was quoted; empty while the value is a single one.
+        members: List[Tuple[str, bool]] = []
         chars = list(tags_part)
         pos = 0
 
@@ -483,7 +647,7 @@ class TaggedUrn:
                         f"got '{c}' at position {pos}"
                     )
 
-            elif state == ParseState.EXPECTING_VALUE:
+            elif state in (ParseState.EXPECTING_VALUE, ParseState.EXPECTING_VALUE_MEMBER):
                 if c == '"':
                     state = ParseState.IN_QUOTED_VALUE
                 elif c == ';':
@@ -496,11 +660,16 @@ class TaggedUrn:
 
             elif state == ParseState.IN_UNQUOTED_VALUE:
                 if c == ';':
-                    finish(_canonicalize_value(qualifier, False, current_key, current_value))
+                    finish(_finish_value(qualifier, current_key, members, (current_value, False)))
                     current_key = ""
                     current_value = ""
                     qualifier = None
+                    members = []
                     state = ParseState.EXPECTING_KEY
+                elif c == '|':
+                    members.append((current_value, False))
+                    current_value = ""
+                    state = ParseState.EXPECTING_VALUE_MEMBER
                 elif _is_valid_unquoted_value_char(c):
                     current_value += _ascii_lower(c)
                 else:
@@ -525,23 +694,28 @@ class TaggedUrn:
 
             elif state == ParseState.EXPECTING_SEMI_OR_END:
                 if c == ';':
-                    finish(_canonicalize_value(qualifier, True, current_key, current_value))
+                    finish(_finish_value(qualifier, current_key, members, (current_value, True)))
                     current_key = ""
                     current_value = ""
                     qualifier = None
+                    members = []
                     state = ParseState.EXPECTING_KEY
+                elif c == '|':
+                    members.append((current_value, True))
+                    current_value = ""
+                    state = ParseState.EXPECTING_VALUE_MEMBER
                 else:
                     raise InvalidCharacterError(
-                        f"expected ';' or end after quoted value, got '{c}' at position {pos}"
+                        f"expected ';', '|' or end after quoted value, got '{c}' at position {pos}"
                     )
 
             pos += 1
 
         # Handle end of input
         if state == ParseState.IN_UNQUOTED_VALUE:
-            finish(_canonicalize_value(qualifier, False, current_key, current_value))
+            finish(_finish_value(qualifier, current_key, members, (current_value, False)))
         elif state == ParseState.EXPECTING_SEMI_OR_END:
-            finish(_canonicalize_value(qualifier, True, current_key, current_value))
+            finish(_finish_value(qualifier, current_key, members, (current_value, True)))
         elif state == ParseState.EXPECTING_KEY:
             pass
         elif state in (ParseState.IN_QUOTED_VALUE, ParseState.IN_QUOTED_VALUE_ESCAPE):
@@ -552,7 +726,7 @@ class TaggedUrn:
             )
         elif state in (ParseState.IN_KEY, ParseState.IN_KEY_AFTER_QUESTION, ParseState.IN_KEY_AFTER_BANG):
             finish(_canonical_no_value(qualifier))
-        elif state == ParseState.EXPECTING_VALUE:
+        elif state in (ParseState.EXPECTING_VALUE, ParseState.EXPECTING_VALUE_MEMBER):
             raise EmptyTagComponentError(f"empty value for key '{current_key}'")
 
         return cls(prefix, tags)
@@ -561,36 +735,42 @@ class TaggedUrn:
         """Serialize just the tags portion (without prefix): the tags in key
         order, each in its canonical form, joined by ``;``.
 
-        +--------------------+--------------+
-        | Constraint         | Emitted      |
-        +====================+==============+
-        | present            | ``k``        |
-        | unconstrained      | ``?k``       |
-        | absent             | ``!k``       |
-        | optionalNot v      | ``k?=v``     |
-        | presentNot v       | ``k!=v``     |
-        | exact v            | ``k=v``      |
-        +--------------------+--------------+
+        +--------------------------------+--------------+
+        | What the key allows            | Emitted      |
+        +================================+==============+
+        | there, any value               | ``k``        |
+        | any state                      | ``?k``       |
+        | absent                         | ``!k``       |
+        | absent, or none of a, b        | ``k?=a|b``   |
+        | there, none of a, b            | ``k!=a|b``   |
+        | there, one of a, b             | ``k=a|b``    |
+        | absent, or one of a, b         | ``k=a|b|!``  |
+        +--------------------------------+--------------+
 
-        A value is quoted only when it must be to read back as itself:
-        exact ``*`` prints ``k="*"``.
+        A set's values each once, in increasing order. A value is quoted only
+        when it must be to read back as itself: exact ``*`` prints ``k="*"``.
+        The prefix forms (``?k``, ``!k``) and infix forms (``k?=v``,
+        ``k!=v``) are the canonical outputs whichever alias the input used.
         """
         parts = []
-        for k, c in sorted(self._tags.items()):
-            if isinstance(c, ConstraintPresent):
+        for k, c in sorted(self._tags.items(), key=lambda item: item[0]):
+            vs = c.values.vs
+            written = "|".join(_write_value(v) for v in vs)
+            one = isinstance(c.values, ValuesOneOf)
+            if not c.absent and not one and not vs:
                 parts.append(k)
-            elif isinstance(c, ConstraintUnconstrained):
+            elif c.absent and not one and not vs:
                 parts.append(f"?{k}")
-            elif isinstance(c, ConstraintAbsent):
+            elif c.absent and one and not vs:
                 parts.append(f"!{k}")
-            elif isinstance(c, ConstraintOptionalNot):
-                parts.append(f"{k}?={_write_value(c.value)}")
-            elif isinstance(c, ConstraintPresentNot):
-                parts.append(f"{k}!={_write_value(c.value)}")
-            elif isinstance(c, ConstraintExact):
-                parts.append(f"{k}={_write_value(c.value)}")
+            elif c.absent and not one:
+                parts.append(f"{k}?={written}")
+            elif not c.absent and not one:
+                parts.append(f"{k}!={written}")
+            elif not c.absent:
+                parts.append(f"{k}={written}")
             else:
-                raise AssertionError(f"tagged-urn: stored constraint {c!r}")
+                parts.append(f"{k}={written}|!")
         return ";".join(parts)
 
     def to_string(self) -> str:
@@ -622,23 +802,23 @@ class TaggedUrn:
         """Whether this URN writes the exact value ``value`` for ``key``
         (``key=value``). Key is normalized to lowercase; value comparison is
         case-sensitive."""
-        return self._tags.get(key.lower()) == ConstraintExact(value)
+        return exact_value(self._tags.get(key.lower())) == value
 
     def has_marker_tag(self, tag_name: str) -> bool:
-        """Whether ``tag_name`` is present as a marker (``ConstraintPresent``,
+        """Whether ``tag_name`` is present as a marker (there with any value,
         written as just the key). Example: ``cap:constrained;...`` has marker
         tag "constrained"."""
-        return self._tags.get(tag_name.lower()) == ConstraintPresent()
+        return self._tags.get(tag_name.lower()) == present()
 
     def admits_absence(self, key: str) -> bool:
         """Whether what this URN writes at ``key`` lets the key be absent.
 
-        ``!key``, ``?key`` and ``key?=v`` do, and so does a key the URN does not
-        mention, which says nothing of it; ``key``, ``key=v`` and ``key!=v`` do
-        not. Decided by the model: absence satisfies the constraint
-        (``values_match``).
+        ``!key``, ``?key``, ``key?=v`` and ``key=v|!`` do, and so does a key the
+        URN does not mention, which says nothing of it; ``key``, ``key=v`` and
+        ``key!=v`` do not. Decided by the model: absence satisfies the
+        constraint (``values_match``).
         """
-        return _formal.values_match(ConstraintAbsent(), self.constraint(key))
+        return _formal.values_match(absent(), self.constraint(key))
 
     def with_tag(self, key: str, constraint: Constraint) -> 'TaggedUrn':
         """Add or replace a tag. The key must be an identifier and is lowered;
@@ -732,13 +912,12 @@ class TaggedUrn:
         """The most specific URN every one of ``urns`` conforms to: their common
         denominator.
 
-        Key by key, the bound allows every state some input allows. Where no
-        single form says exactly that, there is no least bound at all —
-        ``ext=png`` and ``ext=jpeg`` are both ``ext``, both ``ext!=pdf`` and
-        both ``ext!=gif`` — so the bound is the least among those that exclude
-        only values the inputs name: here ``ext``. When one input holds all the
-        others, the bound is that input. The bound of no URNs is the URN with
-        no tags.
+        Key by key, the bound allows every state some input allows, and no
+        other: a form holds any set of values, so ``ext=png`` and ``ext=jpeg``
+        are bound by ``ext=jpeg|png``, not by ``ext`` (some value); ``ext=png``
+        and ``!ext`` by ``ext=png|!``. A key whose bound allows every state is
+        left out. When one input holds all the others, the bound is that input.
+        The bound of no URNs is the URN with no tags.
 
         Made by the model (``TaggedUrn.Exec.leastUpperBound``), whose theorems
         say every input conforms to the bound and the bound conforms to every
@@ -795,24 +974,36 @@ class TaggedUrn:
         return self.accepts(instance)
 
     def specificity(self) -> int:
-        """Calculate specificity score for URN matching, as the model computes it.
+        """Calculate specificity score for URN matching, as the model computes it
+        (``TaggedUrn.Exec.specificity``).
 
-        Sum of the per-tag truth-table score across every tag: ``?x`` 0,
-        ``x?=v`` 1, ``x`` 2, ``x!=v`` 3, ``x=v`` 4, ``!x`` 5.
+        The sum of per-tag scores, each by what the tag allows:
+
+        ============================================  ====================  =====
+        What the key allows                           e.g.                  Score
+        ============================================  ====================  =====
+        absence and every value                       ``?x``                0
+        absence and some values, not every value      ``x?=v``, ``x=v|!``   1
+        every value                                   ``x``                 2
+        two or more values, not every value           ``x!=v``, ``x=a|b``   3
+        exactly one value                             ``x=v``               4
+        only absence                                  ``!x``                5
+        ============================================  ====================  =====
+
+        Higher scores indicate more constrained (more specific) tags; a tag
+        that is narrower never scores lower. Identity (``prefix:`` with no
+        tags) scores 0.
         """
         return _formal.specificity(self._formal)
 
     def specificity_tuple(self) -> Tuple[int, int, int, int, int]:
-        """How many tags fall into each non-zero form, from the highest score
-        to the lowest: ``(absent, exact, present_not, present, optional_not)``."""
-        counts = {ConstraintAbsent: 0, ConstraintExact: 0, ConstraintPresentNot: 0,
-                  ConstraintPresent: 0, ConstraintOptionalNot: 0}
+        """How many tags score 5, 4, 3, 2 and 1
+        (``TaggedUrn.Exec.tagSpecificity``): ``(absent, exact, present_not,
+        present, optional_not)``, named by the written form of each score."""
+        counts = [0] * 6
         for c in self._tags.values():
-            if isinstance(c, ConstraintUnconstrained):
-                continue
-            counts[type(c)] += 1
-        return (counts[ConstraintAbsent], counts[ConstraintExact], counts[ConstraintPresentNot],
-                counts[ConstraintPresent], counts[ConstraintOptionalNot])
+            counts[_formal.tag_specificity(c)] += 1
+        return (counts[5], counts[4], counts[3], counts[2], counts[1])
 
     def is_more_specific_than(self, other: 'TaggedUrn') -> bool:
         """Check if this URN is more specific than another"""
@@ -923,7 +1114,7 @@ class TaggedUrn:
         if key not in self._tags:
             return self
         new_tags = dict(self._tags)
-        new_tags[key] = ConstraintPresent()
+        new_tags[key] = present()
         return TaggedUrn(self.prefix, new_tags)
 
     def subset(self, keys: List[str]) -> 'TaggedUrn':
@@ -968,31 +1159,40 @@ class TaggedUrn:
         return self.prefix == other.prefix and self.tags == other.tags
 
     def __hash__(self) -> int:
-        return hash((self.prefix, tuple(sorted(self.tags.items()))))
+        # The model's forms hold their values in lists, which do not hash; the
+        # ordering key holds the same parts, and equal URNs have equal keys.
+        return hash(self.ordering_key())
 
-    #: Each constraint form's place in the order of URNs: the truth table's.
-    _FORM_ORDER = {
-        ConstraintUnconstrained: 0,
-        ConstraintOptionalNot: 1,
-        ConstraintPresent: 2,
-        ConstraintPresentNot: 3,
-        ConstraintExact: 4,
-        ConstraintAbsent: 5,
-    }
+    @staticmethod
+    def _form_order(c: Constraint) -> int:
+        """A stored constraint's form's place in the order of URNs: the truth
+        table's (``?k``, ``k?=…``, ``k=…|!``, ``k``, ``k!=…``, ``k=…``,
+        ``!k``)."""
+        one = isinstance(c.values, ValuesOneOf)
+        vs = c.values.vs
+        if c.absent and not one:
+            return 1 if vs else 0
+        if c.absent and vs:
+            return 2
+        if not c.absent and not one:
+            return 4 if vs else 3
+        if not c.absent:
+            return 5
+        return 6
 
     def ordering_key(self) -> tuple:
         """The key URNs are ordered by: their parts, never their text. The
         prefix, then the tags in key order, each by its key, then by its
-        constraint's form in the truth table's order (unconstrained,
-        optionalNot, present, presentNot, exact, absent), then by its value; a
-        URN whose tags are the beginning of another's stands first. The text
-        would order ``file;sample`` after ``file-path``, wherever one key is the
-        beginning of another."""
+        constraint's form in the truth table's order (``?k``, ``k?=…``,
+        ``k=…|!``, ``k``, ``k!=…``, ``k=…``, ``!k``), then by its values in
+        order; a URN whose tags are the beginning of another's stands first.
+        The text would order ``file;sample`` after ``file-path``, wherever one
+        key is the beginning of another."""
         return (
             self.prefix,
             tuple(
-                (key, self._FORM_ORDER[type(c)], getattr(c, "value", ""))
-                for key, c in sorted(self._tags.items())
+                (key, self._form_order(c), tuple(c.values.vs))
+                for key, c in sorted(self._tags.items(), key=lambda item: item[0])
             ),
         )
 
@@ -1091,11 +1291,11 @@ class TaggedUrnBuilder:
     def tag(self, key: str, value: str) -> 'TaggedUrnBuilder':
         """Add the exact value ``value`` for ``key`` (``key=value``), taken
         literally: ``tag("x", "*")`` is the exact value ``*``, not the marker."""
-        return self.constraint(key, ConstraintExact(value))
+        return self.constraint(key, exact(value))
 
     def marker(self, key: str) -> 'TaggedUrnBuilder':
-        """Add ``key`` as a marker (present, written as just the key)."""
-        return self.constraint(key, ConstraintPresent())
+        """Add ``key`` as a marker (there with any value, written as just the key)."""
+        return self.constraint(key, present())
 
     def build(self) -> TaggedUrn:
         """Build the tagged URN

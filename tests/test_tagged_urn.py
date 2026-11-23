@@ -1,16 +1,19 @@
 import pytest
 from tagged_urn import (
-    ConstraintAbsent,
-    ConstraintExact,
-    ConstraintOptionalNot,
-    ConstraintPresent,
-    ConstraintPresentNot,
-    ConstraintUnconstrained,
+    DuplicateValueError,
     TaggedUrn,
     TaggedUrnBuilder,
     InvalidCharacterError,
     TaggedUrnError,
     UrnMatcher,
+    absent,
+    exact,
+    none_of,
+    one_of,
+    optional_not,
+    present,
+    present_not,
+    unconstrained,
 )
 
 
@@ -19,8 +22,8 @@ def test_0001_tagged_urn_creation():
     urn = TaggedUrn.from_string("cap:generate;ext=pdf;target=thumbnail;")
     assert urn.get_prefix() == "cap"
     assert urn.has_marker_tag("generate")
-    assert urn.get_tag("target") == ConstraintExact("thumbnail")
-    assert urn.get_tag("ext") == ConstraintExact("pdf")
+    assert urn.get_tag("target") == exact("thumbnail")
+    assert urn.get_tag("ext") == exact("pdf")
 
 
 # TEST0002: Custom prefix
@@ -70,12 +73,12 @@ def test_0006_unquoted_values_lowercased():
 
     # Keys are always lowercase
     assert urn.has_marker_tag("generate")
-    assert urn.get_tag("ext") == ConstraintExact("pdf")
-    assert urn.get_tag("target") == ConstraintExact("thumbnail")
+    assert urn.get_tag("ext") == exact("pdf")
+    assert urn.get_tag("target") == exact("thumbnail")
 
     # Key lookup is case-insensitive (uppercase variants of an existing key resolve correctly)
-    assert urn.get_tag("EXT") == ConstraintExact("pdf")
-    assert urn.get_tag("Ext") == ConstraintExact("pdf")
+    assert urn.get_tag("EXT") == exact("pdf")
+    assert urn.get_tag("Ext") == exact("pdf")
 
     # Tag order in the source string does not affect canonical form —
     # parsed URNs sort tags alphabetically before serializing.
@@ -88,17 +91,17 @@ def test_0006_unquoted_values_lowercased():
 def test_0007_quoted_values_preserve_case():
     # Quoted values preserve their case
     urn = TaggedUrn.from_string(r'cap:key="Value With Spaces"')
-    assert urn.get_tag("key") == ConstraintExact("Value With Spaces")
+    assert urn.get_tag("key") == exact("Value With Spaces")
 
     # Key is still lowercase
     urn2 = TaggedUrn.from_string(r'cap:KEY="Value With Spaces"')
-    assert urn2.get_tag("key") == ConstraintExact("Value With Spaces")
+    assert urn2.get_tag("key") == exact("Value With Spaces")
 
     # Unquoted vs quoted case difference
     unquoted = TaggedUrn.from_string("cap:key=UPPERCASE")
     quoted = TaggedUrn.from_string(r'cap:key="UPPERCASE"')
-    assert unquoted.get_tag("key") == ConstraintExact("uppercase")  # lowercase
-    assert quoted.get_tag("key") == ConstraintExact("UPPERCASE")  # preserved
+    assert unquoted.get_tag("key") == exact("uppercase")  # lowercase
+    assert quoted.get_tag("key") == exact("UPPERCASE")  # preserved
     assert unquoted != quoted  # NOT equal
 
 
@@ -106,37 +109,37 @@ def test_0007_quoted_values_preserve_case():
 def test_0008_quoted_value_special_chars():
     # Semicolons in quoted values
     urn = TaggedUrn.from_string(r'cap:key="value;with;semicolons"')
-    assert urn.get_tag("key") == ConstraintExact("value;with;semicolons")
+    assert urn.get_tag("key") == exact("value;with;semicolons")
 
     # Equals in quoted values
     urn2 = TaggedUrn.from_string(r'cap:key="value=with=equals"')
-    assert urn2.get_tag("key") == ConstraintExact("value=with=equals")
+    assert urn2.get_tag("key") == exact("value=with=equals")
 
     # Spaces in quoted values
     urn3 = TaggedUrn.from_string(r'cap:key="hello world"')
-    assert urn3.get_tag("key") == ConstraintExact("hello world")
+    assert urn3.get_tag("key") == exact("hello world")
 
 
 # TEST0009: Quoted value escape sequences
 def test_0009_quoted_value_escape_sequences():
     # Escaped quotes
     urn = TaggedUrn.from_string(r'cap:key="value\"quoted\""')
-    assert urn.get_tag("key") == ConstraintExact(r'value"quoted"')
+    assert urn.get_tag("key") == exact(r'value"quoted"')
 
     # Escaped backslashes
     urn2 = TaggedUrn.from_string(r'cap:key="path\\file"')
-    assert urn2.get_tag("key") == ConstraintExact(r'path\file')
+    assert urn2.get_tag("key") == exact(r'path\file')
 
     # Mixed escapes
     urn3 = TaggedUrn.from_string(r'cap:key="say \"hello\\world\""')
-    assert urn3.get_tag("key") == ConstraintExact(r'say "hello\world"')
+    assert urn3.get_tag("key") == exact(r'say "hello\world"')
 
 
 # TEST0010: Mixed quoted unquoted
 def test_0010_mixed_quoted_unquoted():
     urn = TaggedUrn.from_string(r'cap:a="Quoted";b=simple')
-    assert urn.get_tag("a") == ConstraintExact("Quoted")
-    assert urn.get_tag("b") == ConstraintExact("simple")
+    assert urn.get_tag("a") == exact("Quoted")
+    assert urn.get_tag("b") == exact("simple")
 
 
 # TEST0011: Unterminated quote error
@@ -198,14 +201,14 @@ def test_0015_round_trip_quoted():
     serialized = str(urn)
     reparsed = TaggedUrn.from_string(serialized)
     assert urn == reparsed
-    assert reparsed.get_tag("key") == ConstraintExact("Value With Spaces")
+    assert reparsed.get_tag("key") == exact("Value With Spaces")
 
 
 # TEST0016: Round trip escapes
 def test_0016_round_trip_escapes():
     original = r'cap:key="value\"with\\escapes"'
     urn = TaggedUrn.from_string(original)
-    assert urn.get_tag("key") == ConstraintExact(r'value"with\escapes')
+    assert urn.get_tag("key") == exact(r'value"with\escapes')
     serialized = str(urn)
     reparsed = TaggedUrn.from_string(serialized)
     assert urn == reparsed
@@ -360,7 +363,7 @@ def test_0024_builder():
            .build())
 
     assert urn.has_marker_tag("generate")
-    assert urn.get_tag("output") == ConstraintExact("binary")
+    assert urn.get_tag("output") == exact("binary")
 
 
 # TEST0025: Builder preserves case
@@ -368,7 +371,7 @@ def test_0025_builder_preserves_case():
     urn = TaggedUrnBuilder("cap").tag("KEY", "ValueWithCase").build()
 
     # Key is lowercase
-    assert urn.get_tag("key") == ConstraintExact("ValueWithCase")
+    assert urn.get_tag("key") == exact("ValueWithCase")
     # Value case preserved, so needs quoting
     assert str(urn) == r'cap:key="ValueWithCase"'
 
@@ -489,13 +492,13 @@ def test_0032_empty_with_custom_prefix():
 def test_0033_extended_character_support():
     # Test forward slashes and colons in tag components
     urn = TaggedUrn.from_string("cap:url=https://example_org/api;path=/some/file")
-    assert urn.get_tag("url") == ConstraintExact("https://example_org/api")
-    assert urn.get_tag("path") == ConstraintExact("/some/file")
+    assert urn.get_tag("url") == exact("https://example_org/api")
+    assert urn.get_tag("path") == exact("/some/file")
 
     # `=` still needs quotes; `,` stands bare
     listed = TaggedUrn.from_string('cap:list=a,b;url="https://example.org/a?b=c"')
-    assert listed.get_tag("url") == ConstraintExact("https://example.org/a?b=c")
-    assert listed.get_tag("list") == ConstraintExact("a,b")
+    assert listed.get_tag("url") == exact("https://example.org/a?b=c")
+    assert listed.get_tag("list") == exact("a,b")
     assert str(listed) == 'cap:list=a,b;url="https://example.org/a?b=c"'
     with pytest.raises(TaggedUrnError):
         TaggedUrn.from_string("cap:url=https://example.org/a?b=c")
@@ -509,7 +512,7 @@ def test_0034_wildcard_restrictions():
 
     # Wildcard should be accepted in values
     urn = TaggedUrn.from_string("cap:key=*")
-    assert urn.get_tag("key") == ConstraintPresent()
+    assert urn.get_tag("key") == present()
 
 
 # TEST0035: Duplicate key rejection
@@ -560,14 +563,14 @@ def test_0038_has_tag_case_sensitive():
 
 # TEST0039: With tag preserves value
 def test_0039_with_tag_preserves_value():
-    urn = TaggedUrn.empty("cap").with_tag("key", ConstraintExact("ValueWithCase"))
-    assert urn.get_tag("key") == ConstraintExact("ValueWithCase")
+    urn = TaggedUrn.empty("cap").with_tag("key", exact("ValueWithCase"))
+    assert urn.get_tag("key") == exact("ValueWithCase")
 
 
 # TEST0040: With tag rejects empty value
 def test_0040_with_tag_rejects_empty_value():
     with pytest.raises(TaggedUrnError) as exc_info:
-        TaggedUrn.empty("cap").with_tag("key", ConstraintExact(""))
+        TaggedUrn.empty("cap").with_tag("key", exact(""))
     assert "empty value" in str(exc_info.value).lower()
 
 
@@ -745,7 +748,7 @@ def test_0052_matching_different_prefixes_error():
 def test_0053_valueless_tag_parsing_single():
     # Single value-less tag
     urn = TaggedUrn.from_string("cap:optimize")
-    assert urn.get_tag("optimize") == ConstraintPresent()
+    assert urn.get_tag("optimize") == present()
     # Serializes as value-less (no =*)
     assert str(urn) == "cap:optimize"
 
@@ -754,9 +757,9 @@ def test_0053_valueless_tag_parsing_single():
 def test_0054_valueless_tag_parsing_multiple():
     # Multiple value-less tags
     urn = TaggedUrn.from_string("cap:fast;optimize;secure")
-    assert urn.get_tag("fast") == ConstraintPresent()
-    assert urn.get_tag("optimize") == ConstraintPresent()
-    assert urn.get_tag("secure") == ConstraintPresent()
+    assert urn.get_tag("fast") == present()
+    assert urn.get_tag("optimize") == present()
+    assert urn.get_tag("secure") == present()
     # Serializes alphabetically as value-less
     assert str(urn) == "cap:fast;optimize;secure"
 
@@ -766,9 +769,9 @@ def test_0055_valueless_tag_mixed_with_valued():
     # Mix of value-less and valued tags
     urn = TaggedUrn.from_string("cap:generate;optimize;ext=pdf;secure")
     assert urn.has_marker_tag("generate")
-    assert urn.get_tag("optimize") == ConstraintPresent()
-    assert urn.get_tag("ext") == ConstraintExact("pdf")
-    assert urn.get_tag("secure") == ConstraintPresent()
+    assert urn.get_tag("optimize") == present()
+    assert urn.get_tag("ext") == exact("pdf")
+    assert urn.get_tag("secure") == present()
     # Serializes alphabetically
     assert str(urn) == "cap:ext=pdf;generate;optimize;secure"
 
@@ -778,7 +781,7 @@ def test_0056_valueless_tag_at_end():
     # Value-less tag at the end (no trailing semicolon)
     urn = TaggedUrn.from_string("cap:generate;optimize")
     assert urn.has_marker_tag("generate")
-    assert urn.get_tag("optimize") == ConstraintPresent()
+    assert urn.get_tag("optimize") == present()
     assert str(urn) == "cap:generate;optimize"
 
 
@@ -856,9 +859,9 @@ def test_0061_valueless_tag_roundtrip():
 def test_0062_valueless_tag_case_normalization():
     # Value-less tags are normalized to lowercase like other keys
     urn = TaggedUrn.from_string("cap:OPTIMIZE;Fast;SECURE")
-    assert urn.get_tag("optimize") == ConstraintPresent()
-    assert urn.get_tag("fast") == ConstraintPresent()
-    assert urn.get_tag("secure") == ConstraintPresent()
+    assert urn.get_tag("optimize") == present()
+    assert urn.get_tag("fast") == present()
+    assert urn.get_tag("secure") == present()
     assert str(urn) == "cap:fast;optimize;secure"
 
 
@@ -930,7 +933,7 @@ def test_0067_unspecified_question_mark_parsing():
     # All three input aliases (?x, x?, x=?) parse to the constraint
     # unconstrained and serialize as the canonical prefix form `?x`.
     urn = TaggedUrn.from_string("cap:ext=?")
-    assert urn.get_tag("ext") == ConstraintUnconstrained()
+    assert urn.get_tag("ext") == unconstrained()
     assert str(urn) == "cap:?ext"
 
 
@@ -939,7 +942,7 @@ def test_0068_must_not_have_exclamation_parsing():
     # All three input aliases (!x, x!, x=!) parse to the constraint
     # absent and serialize as the canonical prefix form `!x`.
     urn = TaggedUrn.from_string("cap:ext=!")
-    assert urn.get_tag("ext") == ConstraintAbsent()
+    assert urn.get_tag("ext") == absent()
     assert str(urn) == "cap:!ext"
 
 
@@ -1312,9 +1315,9 @@ def test_587_builder_fluent_api():
            .build())
 
     assert urn.has_marker_tag("generate")
-    assert urn.get_tag("target") == ConstraintExact("thumbnail")
-    assert urn.get_tag("format") == ConstraintExact("pdf")
-    assert urn.get_tag("output") == ConstraintExact("binary")
+    assert urn.get_tag("target") == exact("thumbnail")
+    assert urn.get_tag("format") == exact("pdf")
+    assert urn.get_tag("output") == exact("binary")
 
 
 # TEST588: Builder with custom tags
@@ -1325,8 +1328,8 @@ def test_588_builder_custom_tags():
            .marker("compress")
            .build())
 
-    assert urn.get_tag("engine") == ConstraintExact("v2")
-    assert urn.get_tag("quality") == ConstraintExact("high")
+    assert urn.get_tag("engine") == exact("v2")
+    assert urn.get_tag("quality") == exact("high")
     assert urn.has_marker_tag("compress")
 
 
@@ -1338,7 +1341,7 @@ def test_589_builder_tag_overrides():
            .build())
 
     assert urn.has_marker_tag("convert")
-    assert urn.get_tag("format") == ConstraintExact("jpg")
+    assert urn.get_tag("format") == exact("jpg")
 
 
 # TEST590: Builder empty build raises error (tags required)
@@ -1353,7 +1356,7 @@ def test_591_builder_single_tag():
     urn = TaggedUrnBuilder("cap").tag("type", "utility").build()
 
     assert str(urn) == "cap:type=utility"
-    assert urn.get_tag("type") == ConstraintExact("utility")
+    assert urn.get_tag("type") == exact("utility")
     # Six-form ladder: exact value = 4 points.
     assert urn.specificity() == 4
 
@@ -1371,14 +1374,14 @@ def test_592_builder_complex():
            .tag("output", "binary")
            .build())
 
-    assert urn.get_tag("type") == ConstraintExact("media")
+    assert urn.get_tag("type") == exact("media")
     assert urn.has_marker_tag("transcode")
-    assert urn.get_tag("target") == ConstraintExact("video")
-    assert urn.get_tag("format") == ConstraintExact("mp4")
-    assert urn.get_tag("codec") == ConstraintExact("h264")
-    assert urn.get_tag("quality") == ConstraintExact("1080p")
-    assert urn.get_tag("framerate") == ConstraintExact("30fps")
-    assert urn.get_tag("output") == ConstraintExact("binary")
+    assert urn.get_tag("target") == exact("video")
+    assert urn.get_tag("format") == exact("mp4")
+    assert urn.get_tag("codec") == exact("h264")
+    assert urn.get_tag("quality") == exact("1080p")
+    assert urn.get_tag("framerate") == exact("30fps")
+    assert urn.get_tag("output") == exact("binary")
 
     # Six-form ladder: 7 exact-valued tags × 4 + 1 marker (transcode) × 2 = 28 + 2 = 30.
     assert urn.specificity() == 30
@@ -1401,8 +1404,8 @@ def test_593_builder_wildcards():
     assert urn.has_marker_tag("ext")
     assert urn.has_marker_tag("quality")
 
-    assert urn.get_tag("ext") == ConstraintPresent()
-    assert urn.get_tag("quality") == ConstraintPresent()
+    assert urn.get_tag("ext") == present()
+    assert urn.get_tag("quality") == present()
 
 
 # TEST594: Builder with custom prefix
@@ -1510,14 +1513,14 @@ def test_600_every_model_function_carries_a_proved_claim():
     assert (refines.relation, refines.specifications) == ("lungo.decides", ("TaggedUrn.refines",))
 
 
-# TEST392: the bound of several URNs: the values they share, a key every one sets to differing values as "some value", the coarser of two comparable URNs, nothing for none, and another prefix refused
+# TEST392: the bound of several URNs: the values they share, a key every one sets to differing values as the set of those values, the coarser of two comparable URNs, nothing for none, and another prefix refused
 def test_392_least_upper_bound():
     from tagged_urn import PrefixMismatchError
 
     def bound(*urns):
         return TaggedUrn.least_upper_bound("media", [TaggedUrn.from_string(u) for u in urns])
 
-    assert bound("media:ext=png;image", "media:ext=jpeg;image") == TaggedUrn.from_string("media:ext;image")
+    assert bound("media:ext=png;image", "media:ext=jpeg;image") == TaggedUrn.from_string("media:ext=jpeg|png;image")
     # One input already holds the other: the bound is that input, not the wider `ext`.
     assert bound("media:ext=png", "media:ext!=pdf") == TaggedUrn.from_string("media:ext!=pdf")
     # A key one input omits says nothing there, so the bound says nothing either.
@@ -1533,10 +1536,10 @@ def test_6752_qualifier_value_alias():
     p = TaggedUrn.from_string
     assert p("t:x=?v") == p("t:x?=v")
     assert str(p("t:x=?v")) == "t:x?=v"
-    assert p("t:x=?v").get_tag("x") == ConstraintOptionalNot("v")
+    assert p("t:x=?v").get_tag("x") == optional_not("v")
     assert p("t:x=!v") == p("t:x!=v")
     assert str(p("t:x=!v")) == "t:x!=v"
-    assert p("t:x=!v").get_tag("x") == ConstraintPresentNot("v")
+    assert p("t:x=!v").get_tag("x") == present_not("v")
 
     for refused in ["t:x=?*", "t:x=!?", "t:x=??", "t:x=?!", "t:x=!*", "t:?x=?v", "t:x!=!v"]:
         with pytest.raises(InvalidCharacterError):
@@ -1546,7 +1549,7 @@ def test_6752_qualifier_value_alias():
     assert str(p("t:x=!")) == "t:!x"
 
     literal = p('t:x="?v"')
-    assert literal.get_tag("x") == ConstraintExact("?v")
+    assert literal.get_tag("x") == exact("?v")
     assert str(literal) == 't:x="?v"'
     assert p(str(literal)) == literal
     assert literal != p("t:x?=v")
@@ -1560,10 +1563,10 @@ def test_6753_prefix_and_key_are_identifiers():
 
     urn = TaggedUrn.from_string("T:A-b1=v")
     assert urn.prefix == "t"
-    assert urn.get_tag("a-b1") == ConstraintExact("v")
+    assert urn.get_tag("a-b1") == exact("v")
 
     with pytest.raises(InvalidCharacterError):
-        TaggedUrn("t", {"a_b": ConstraintExact("v")})
+        TaggedUrn("t", {"a_b": exact("v")})
     with pytest.raises(InvalidCharacterError):
         TaggedUrn.empty("my_app")
     with pytest.raises(InvalidCharacterError):
@@ -1571,7 +1574,7 @@ def test_6753_prefix_and_key_are_identifiers():
     with pytest.raises(InvalidCharacterError):
         TaggedUrnBuilder("t").tag("a.b", "v")
     with pytest.raises(InvalidCharacterError):
-        TaggedUrn.empty("t").with_tag("a/b", ConstraintExact("v"))
+        TaggedUrn.empty("t").with_tag("a/b", exact("v"))
     with pytest.raises(InvalidCharacterError):
         TaggedUrn.least_upper_bound("a:b", [])
 
@@ -1589,22 +1592,24 @@ def test_6754_every_value_reads_back():
     for value in ["a,b", "a(b)", "x@y#z", "a\tb", "Été", "a b", "a;b", "a=b", 'q"q', "b\\s", "plain", "?v",
                   "!v", "*", "?", "!", "*v"]:
         urn = TaggedUrn.from_string("t:k=" + _quoted_literal(value))
-        assert urn.get_tag("k") == ConstraintExact(value), value
+        assert urn.get_tag("k") == exact(value), value
         printed = str(urn)
         reparsed = TaggedUrn.from_string(printed)
         assert reparsed == urn, (value, printed)
-        assert reparsed.get_tag("k") == ConstraintExact(value)
+        assert reparsed.get_tag("k") == exact(value)
 
 
-# TEST6755: An unquoted value takes any character but ; = " \ and whitespace
+# TEST6755: An unquoted value takes any character but ; = | " \ and whitespace
 def test_6755_unquoted_value_takes_any_non_separator():
     urn = TaggedUrn.from_string("t:k=a,b(c)")
-    assert urn.get_tag("k") == ConstraintExact("a,b(c)")
+    assert urn.get_tag("k") == exact("a,b(c)")
 
-    symbols = TaggedUrn.from_string("t:k=x@y#z+%&~'[]{}<>^$|")
-    assert symbols.get_tag("k") == ConstraintExact("x@y#z+%&~'[]{}<>^$|")
+    symbols = TaggedUrn.from_string("t:k=x@y#z+%&~'[]{}<>^$")
+    assert symbols.get_tag("k") == exact("x@y#z+%&~'[]{}<>^$")
+    # `|` separates the values of a set.
+    assert TaggedUrn.from_string("t:k=a|b").get_tag("k") == one_of(["a", "b"], False)
 
-    assert TaggedUrn.from_string("t:k=A,B").get_tag("k") == ConstraintExact("a,b")
+    assert TaggedUrn.from_string("t:k=A,B").get_tag("k") == exact("a,b")
 
     with pytest.raises(InvalidCharacterError):
         TaggedUrn.from_string("t:k=a\tb")
@@ -1617,7 +1622,7 @@ def test_6755_unquoted_value_takes_any_non_separator():
 def test_6756_quoted_value_is_literal():
     p = TaggedUrn.from_string
     star = p('t:x="*"')
-    assert star.get_tag("x") == ConstraintExact("*")
+    assert star.get_tag("x") == exact("*")
     assert star != p("t:x")
     assert str(star) == 't:x="*"'
     assert p(str(star)) == star
@@ -1625,14 +1630,14 @@ def test_6756_quoted_value_is_literal():
     assert not p("t:x").conforms_to(star)
 
     question = p('t:x="?"')
-    assert question.get_tag("x") == ConstraintExact("?")
+    assert question.get_tag("x") == exact("?")
     assert not question.is_equivalent(p("t:?x"))
 
-    assert p('t:x="!"').get_tag("x") == ConstraintExact("!")
-    assert p('t:x="?=v"').get_tag("x") == ConstraintExact("?=v")
+    assert p('t:x="!"').get_tag("x") == exact("!")
+    assert p('t:x="?=v"').get_tag("x") == exact("?=v")
 
     optional = p('t:?x="*"')
-    assert optional.get_tag("x") == ConstraintOptionalNot("*")
+    assert optional.get_tag("x") == optional_not("*")
     assert str(optional) == 't:x?="*"'
     assert p(str(optional)) == optional
 
@@ -1675,6 +1680,69 @@ def test_7223_urn_read_back_from_its_handle():
         assert back.prefix == urn.prefix, text
         assert dict(back.tags) == dict(urn.tags), text
         assert back == urn, text
+
+
+# TEST7224: Each set form parses to the set it writes and prints canonically — values once, in increasing order, `!` last — reading back as itself; the qualifier aliases write the same sets
+def test_7224_set_forms_parse_and_print():
+    cases = [
+        ("t:x=b|a", one_of(["a", "b"], False), "t:x=a|b"),
+        ("t:x!=b|a", none_of(["a", "b"], False), "t:x!=a|b"),
+        ("t:x?=b|a", none_of(["a", "b"], True), "t:x?=a|b"),
+        ("t:x=b|!|a", one_of(["a", "b"], True), "t:x=a|b|!"),
+        ("t:x=a|!", one_of(["a"], True), "t:x=a|!"),
+        ('t:x="a|b"|c', one_of(["a|b", "c"], False), 't:x="a|b"|c'),
+        ("t:!x=a|b", none_of(["a", "b"], False), "t:x!=a|b"),
+        ("t:?x=a|b", none_of(["a", "b"], True), "t:x?=a|b"),
+    ]
+    for text, constraint, printed in cases:
+        urn = TaggedUrn.from_string(text)
+        assert urn.get_tag("x") == constraint, text
+        assert str(urn) == printed, text
+        assert TaggedUrn.from_string(printed) == urn, printed
+    # One value is the single form it always was.
+    assert TaggedUrn.from_string("t:x=a").get_tag("x") == exact("a")
+
+
+# TEST7225: A set of values refuses a value given twice, an empty member, a bare sigil or qualifier among its values, and `!` under a qualifier; a literal `|` is quoted
+def test_7225_set_forms_refused():
+    for text in ["t:x=a|a", "t:x=a|!|!", "t:x!=a|a"]:
+        with pytest.raises(DuplicateValueError):
+            TaggedUrn.from_string(text)
+    for text in ["t:x=a|*", "t:x=a|?", "t:x=?a|b", "t:x=a|!b", "t:x!=a|!", "t:x?=a|!"]:
+        with pytest.raises(InvalidCharacterError):
+            TaggedUrn.from_string(text)
+    for text in ["t:x=a|", "t:x=a||b", "t:x=|a", "t:x=!|!"]:
+        with pytest.raises(TaggedUrnError):
+            TaggedUrn.from_string(text)
+    quoted = TaggedUrn.from_string('t:x="a|b"')
+    assert quoted.get_tag("x") == exact("a|b")
+    assert str(quoted) == 't:x="a|b"'
+
+
+# TEST7226: The bound of several URNs is exact per key: png and jpeg are bound by ext=jpeg|png, a value and its absence by ext=v|!, and a value and any value by ext
+def test_7226_bound_is_exact_per_key():
+    def bound(*urns):
+        return str(TaggedUrn.least_upper_bound("media", [TaggedUrn.from_string(u) for u in urns]))
+
+    assert bound("media:ext=png", "media:ext=jpeg") == "media:ext=jpeg|png"
+    assert bound("media:ext=png", "media:!ext") == "media:ext=png|!"
+    assert bound("media:ext=png", "media:ext") == "media:ext"
+    assert bound("media:ext=a|b", "media:ext=b|c") == "media:ext=a|b|c"
+    assert bound("media:ext!=a", "media:ext=a") == "media:ext"
+
+
+# TEST7227: A set scores by what it allows — two or more values 3, absence and some values 1 — and narrowing never lowers a score, though two on one chain can tie
+def test_7227_set_scores():
+    def score(text):
+        return TaggedUrn.from_string(text).specificity()
+
+    assert score("t:x=a|b") == 3
+    assert score("t:x!=a|b") == 3
+    assert score("t:x?=a|b") == 1
+    assert score("t:x=a|!") == 1
+    assert score("t:x=a|b|c") == 3
+    assert score("t:x=a|b") >= score("t:x")
+    assert TaggedUrn.from_string("t:x=a|b;y=a|!;z").specificity_tuple() == (0, 0, 1, 1, 1)
 
 
 # TEST7210: A written tag lets its key be absent exactly when it is !k, ?k or k?=v; a key the URN does not mention says nothing of it, so it allows absence too
