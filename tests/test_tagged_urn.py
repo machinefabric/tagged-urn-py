@@ -1583,7 +1583,7 @@ def test_6753_prefix_and_key_are_identifiers():
 
 
 def _quoted_literal(value: str) -> str:
-    """``value`` written as a quoted literal: ``"``, with ``"`` and ``\`` escaped."""
+    r"""``value`` written as a quoted literal: ``"``, with ``"`` and ``\`` escaped."""
     return '"' + "".join("\\" + c if c in '"\\' else c for c in value) + '"'
 
 

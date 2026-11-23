@@ -290,7 +290,7 @@ def _check_constraint(key: str, constraint: Constraint) -> None:
 
 
 def _is_valid_unquoted_value_char(c: str) -> bool:
-    """Whether ``c`` may stand in an unquoted value: anything but the separators
+    r"""Whether ``c`` may stand in an unquoted value: anything but the separators
     ``;`` ``=`` ``|``, the quoting characters ``"`` ``\``, and whitespace."""
     return c not in ';=|"\\' and not c.isspace()
 
