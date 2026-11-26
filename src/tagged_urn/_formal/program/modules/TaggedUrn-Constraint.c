@@ -361,7 +361,7 @@ lungo_obj tagged_urn_formal__l_List_dmapTR_dloop_d__at___dTaggedUrn_dfresh_dspec
 }
 
 /* Lean: TaggedUrn.Constraint.absent */
-/* Source: TaggedUrn/Constraint.lean:219:1 */
+/* Source: TaggedUrn/Constraint.lean:220:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent__init(void) {
     lungo_obj x_1;
     x_1 = tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent_d__closed__1();
@@ -374,7 +374,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent(void) {
 
 /* Lean: TaggedUrn.Constraint.absent._closed_0 */
 /* Compiled from: TaggedUrn.Constraint.absent */
-/* Source: TaggedUrn/Constraint.lean:219:1 */
+/* Source: TaggedUrn/Constraint.lean:220:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent_d__closed__0__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -390,7 +390,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent_d__closed__0(void) 
 
 /* Lean: TaggedUrn.Constraint.absent._closed_1 */
 /* Compiled from: TaggedUrn.Constraint.absent */
-/* Source: TaggedUrn/Constraint.lean:219:1 */
+/* Source: TaggedUrn/Constraint.lean:220:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent_d__closed__1__init(void) {
     lungo_obj x_1;
     uint8_t x_2;
@@ -408,7 +408,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dabsent_d__closed__1(void) 
 }
 
 /* Lean: TaggedUrn.Constraint.admitsAbsence */
-/* Source: TaggedUrn/Constraint.lean:472:1 */
+/* Source: TaggedUrn/Constraint.lean:473:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dadmitsAbsence(lungo_obj x_1) {
     uint8_t x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dConstraint_dmayBeAbsent(x_1);
@@ -417,7 +417,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dadmitsAbsence(lungo_obj x_1)
 
 /* Lean: TaggedUrn.Constraint.admitsAbsence._boxed */
 /* Compiled from: TaggedUrn.Constraint.admitsAbsence */
-/* Source: TaggedUrn/Constraint.lean:472:1 */
+/* Source: TaggedUrn/Constraint.lean:473:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dadmitsAbsence_d__boxed(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -428,7 +428,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dadmitsAbsence_d__boxed(lun
 }
 
 /* Lean: TaggedUrn.Constraint.closed */
-/* Source: TaggedUrn/Constraint.lean:489:1 */
+/* Source: TaggedUrn/Constraint.lean:490:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(lungo_obj x_1) {
     lungo_obj x_2;
     switch (lungo_obj_tag(x_1)) {
@@ -445,7 +445,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Constraint.closed._boxed */
 /* Compiled from: TaggedUrn.Constraint.closed */
-/* Source: TaggedUrn/Constraint.lean:489:1 */
+/* Source: TaggedUrn/Constraint.lean:490:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed_d__boxed(lungo_obj x_1) {
     lungo_obj x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed(x_1);
@@ -454,7 +454,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dclosed_d__boxed(lungo_obj 
 }
 
 /* Lean: TaggedUrn.Constraint.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:54:1 */
+/* Source: TaggedUrn/Constraint.lean:55:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4, lungo_obj x_5) {
     (void)x_1;
     (void)x_2;
@@ -466,7 +466,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim(lungo_obj x_1, lu
 
 /* Lean: TaggedUrn.Constraint.ctorElim._boxed */
 /* Compiled from: TaggedUrn.Constraint.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:54:1 */
+/* Source: TaggedUrn/Constraint.lean:55:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4, lungo_obj x_5) {
     lungo_obj x_6;
     x_6 = tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim(x_1, x_2, x_3, x_4, x_5);
@@ -476,7 +476,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim_d__boxed(lungo_ob
 
 /* Lean: TaggedUrn.Constraint.ctorElim._redArg */
 /* Compiled from: TaggedUrn.Constraint.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:54:1 */
+/* Source: TaggedUrn/Constraint.lean:55:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -526,7 +526,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dctorIdx_d__boxed(lungo_obj
 }
 
 /* Lean: TaggedUrn.Constraint.empty */
-/* Source: TaggedUrn/Constraint.lean:319:1 */
+/* Source: TaggedUrn/Constraint.lean:320:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dempty(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -549,7 +549,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dempty(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Constraint.empty._boxed */
 /* Compiled from: TaggedUrn.Constraint.empty */
-/* Source: TaggedUrn/Constraint.lean:319:1 */
+/* Source: TaggedUrn/Constraint.lean:320:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dempty_d__boxed(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -560,7 +560,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dempty_d__boxed(lungo_obj x
 }
 
 /* Lean: TaggedUrn.Constraint.exact */
-/* Source: TaggedUrn/Constraint.lean:217:1 */
+/* Source: TaggedUrn/Constraint.lean:218:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dexact(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -581,7 +581,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dexact(lungo_obj x_1) {
 }
 
 /* Lean: TaggedUrn.Constraint.instDecidableAllows */
-/* Source: TaggedUrn/Constraint.lean:238:1 */
+/* Source: TaggedUrn/Constraint.lean:239:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dinstDecidableAllows(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -604,7 +604,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dinstDecidableAllows(lungo_ob
 
 /* Lean: TaggedUrn.Constraint.instDecidableAllows._boxed */
 /* Compiled from: TaggedUrn.Constraint.instDecidableAllows */
-/* Source: TaggedUrn/Constraint.lean:238:1 */
+/* Source: TaggedUrn/Constraint.lean:239:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dinstDecidableAllows_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -616,7 +616,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dinstDecidableAllows_d__box
 }
 
 /* Lean: TaggedUrn.Constraint.isTop */
-/* Source: TaggedUrn/Constraint.lean:462:1 */
+/* Source: TaggedUrn/Constraint.lean:463:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_disTop(lungo_obj x_1) {
     lungo_obj x_2;
     uint8_t x_3;
@@ -627,7 +627,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_disTop(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Constraint.isTop._boxed */
 /* Compiled from: TaggedUrn.Constraint.isTop */
-/* Source: TaggedUrn/Constraint.lean:462:1 */
+/* Source: TaggedUrn/Constraint.lean:463:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_disTop_d__boxed(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -638,7 +638,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_disTop_d__boxed(lungo_obj x
 }
 
 /* Lean: TaggedUrn.Constraint.join */
-/* Source: TaggedUrn/Constraint.lean:444:1 */
+/* Source: TaggedUrn/Constraint.lean:445:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_djoin(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -671,7 +671,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_djoin(lungo_obj x_1, lungo_
 
 /* Lean: TaggedUrn.Constraint.join._boxed */
 /* Compiled from: TaggedUrn.Constraint.join */
-/* Source: TaggedUrn/Constraint.lean:444:1 */
+/* Source: TaggedUrn/Constraint.lean:445:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_djoin_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dConstraint_djoin(x_1, x_2);
@@ -681,7 +681,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_djoin_d__boxed(lungo_obj x_
 }
 
 /* Lean: TaggedUrn.Constraint.mayBeAbsent */
-/* Source: TaggedUrn/Constraint.lean:222:1 */
+/* Source: TaggedUrn/Constraint.lean:223:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dmayBeAbsent(lungo_obj x_1) {
     uint8_t x_2;
     uint8_t x_3;
@@ -699,7 +699,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dConstraint_dmayBeAbsent(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Constraint.mayBeAbsent._boxed */
 /* Compiled from: TaggedUrn.Constraint.mayBeAbsent */
-/* Source: TaggedUrn/Constraint.lean:222:1 */
+/* Source: TaggedUrn/Constraint.lean:223:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmayBeAbsent_d__boxed(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -710,7 +710,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmayBeAbsent_d__boxed(lungo
 }
 
 /* Lean: TaggedUrn.Constraint.meet */
-/* Source: TaggedUrn/Constraint.lean:448:1 */
+/* Source: TaggedUrn/Constraint.lean:449:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmeet(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -743,7 +743,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmeet(lungo_obj x_1, lungo_
 
 /* Lean: TaggedUrn.Constraint.meet._boxed */
 /* Compiled from: TaggedUrn.Constraint.meet */
-/* Source: TaggedUrn/Constraint.lean:448:1 */
+/* Source: TaggedUrn/Constraint.lean:449:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmeet_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dConstraint_dmeet(x_1, x_2);
@@ -753,7 +753,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmeet_d__boxed(lungo_obj x_
 }
 
 /* Lean: TaggedUrn.Constraint.missing.elim */
-/* Source: TaggedUrn/Constraint.lean:57:3 */
+/* Source: TaggedUrn/Constraint.lean:58:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmissing_delim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4) {
     (void)x_1;
     (void)x_3;
@@ -764,7 +764,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmissing_delim(lungo_obj x_
 
 /* Lean: TaggedUrn.Constraint.missing.elim._redArg */
 /* Compiled from: TaggedUrn.Constraint.missing.elim */
-/* Source: TaggedUrn/Constraint.lean:57:3 */
+/* Source: TaggedUrn/Constraint.lean:58:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmissing_delim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim_d__redArg(x_1, x_2);
@@ -772,7 +772,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dmissing_delim_d__redArg(lu
 }
 
 /* Lean: TaggedUrn.Constraint.optionalNot */
-/* Source: TaggedUrn/Constraint.lean:211:1 */
+/* Source: TaggedUrn/Constraint.lean:212:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_doptionalNot(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -793,7 +793,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_doptionalNot(lungo_obj x_1)
 }
 
 /* Lean: TaggedUrn.Constraint.present */
-/* Source: TaggedUrn/Constraint.lean:213:1 */
+/* Source: TaggedUrn/Constraint.lean:214:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dpresent__init(void) {
     lungo_obj x_1;
     x_1 = tagged_urn_formal__l_TaggedUrn_dConstraint_dpresent_d__closed__0();
@@ -806,7 +806,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dpresent(void) {
 
 /* Lean: TaggedUrn.Constraint.present._closed_0 */
 /* Compiled from: TaggedUrn.Constraint.present */
-/* Source: TaggedUrn/Constraint.lean:213:1 */
+/* Source: TaggedUrn/Constraint.lean:214:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dpresent_d__closed__0__init(void) {
     lungo_obj x_1;
     uint8_t x_2;
@@ -824,7 +824,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dpresent_d__closed__0(void)
 }
 
 /* Lean: TaggedUrn.Constraint.presentNot */
-/* Source: TaggedUrn/Constraint.lean:215:1 */
+/* Source: TaggedUrn/Constraint.lean:216:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dpresentNot(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -845,7 +845,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dpresentNot(lungo_obj x_1) 
 }
 
 /* Lean: TaggedUrn.Constraint.unconstrained */
-/* Source: TaggedUrn/Constraint.lean:209:1 */
+/* Source: TaggedUrn/Constraint.lean:210:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained__init(void) {
     lungo_obj x_1;
     x_1 = tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained_d__closed__1();
@@ -858,7 +858,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained(void) {
 
 /* Lean: TaggedUrn.Constraint.unconstrained._closed_0 */
 /* Compiled from: TaggedUrn.Constraint.unconstrained */
-/* Source: TaggedUrn/Constraint.lean:209:1 */
+/* Source: TaggedUrn/Constraint.lean:210:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained_d__closed__0__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -874,7 +874,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained_d__closed__0
 
 /* Lean: TaggedUrn.Constraint.unconstrained._closed_1 */
 /* Compiled from: TaggedUrn.Constraint.unconstrained */
-/* Source: TaggedUrn/Constraint.lean:209:1 */
+/* Source: TaggedUrn/Constraint.lean:210:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained_d__closed__1__init(void) {
     lungo_obj x_1;
     uint8_t x_2;
@@ -892,7 +892,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dunconstrained_d__closed__1
 }
 
 /* Lean: TaggedUrn.Constraint.vals */
-/* Source: TaggedUrn/Constraint.lean:227:1 */
+/* Source: TaggedUrn/Constraint.lean:228:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dvals(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_3;
@@ -911,7 +911,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dvals(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Constraint.vals._boxed */
 /* Compiled from: TaggedUrn.Constraint.vals */
-/* Source: TaggedUrn/Constraint.lean:227:1 */
+/* Source: TaggedUrn/Constraint.lean:228:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dvals_d__boxed(lungo_obj x_1) {
     lungo_obj x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dConstraint_dvals(x_1);
@@ -920,7 +920,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dvals_d__boxed(lungo_obj x_
 }
 
 /* Lean: TaggedUrn.Constraint.witness */
-/* Source: TaggedUrn/Constraint.lean:350:1 */
+/* Source: TaggedUrn/Constraint.lean:351:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_3;
@@ -942,7 +942,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Constraint.witness._boxed */
 /* Compiled from: TaggedUrn.Constraint.witness */
-/* Source: TaggedUrn/Constraint.lean:350:1 */
+/* Source: TaggedUrn/Constraint.lean:351:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_d__boxed(lungo_obj x_1) {
     lungo_obj x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness(x_1);
@@ -951,7 +951,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_d__boxed(lungo_obj
 }
 
 /* Lean: TaggedUrn.Constraint.witness? */
-/* Source: TaggedUrn/Constraint.lean:304:1 */
+/* Source: TaggedUrn/Constraint.lean:305:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f_(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -1022,7 +1022,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f_(lungo_obj x_1
 
 /* Lean: TaggedUrn.Constraint.witness?._boxed */
 /* Compiled from: TaggedUrn.Constraint.witness? */
-/* Source: TaggedUrn/Constraint.lean:304:1 */
+/* Source: TaggedUrn/Constraint.lean:305:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f__d__boxed(lungo_obj x_1) {
     lungo_obj x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f_(x_1);
@@ -1032,7 +1032,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f__d__boxed(lung
 
 /* Lean: TaggedUrn.Constraint.witness?._closed_0 */
 /* Compiled from: TaggedUrn.Constraint.witness? */
-/* Source: TaggedUrn/Constraint.lean:304:1 */
+/* Source: TaggedUrn/Constraint.lean:305:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f__d__closed__0__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -1047,7 +1047,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwitness_x3f__d__closed__0(
 }
 
 /* Lean: TaggedUrn.Constraint.written.elim */
-/* Source: TaggedUrn/Constraint.lean:58:3 */
+/* Source: TaggedUrn/Constraint.lean:59:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwritten_delim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4) {
     (void)x_1;
     (void)x_3;
@@ -1058,7 +1058,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwritten_delim(lungo_obj x_
 
 /* Lean: TaggedUrn.Constraint.written.elim._redArg */
 /* Compiled from: TaggedUrn.Constraint.written.elim */
-/* Source: TaggedUrn/Constraint.lean:58:3 */
+/* Source: TaggedUrn/Constraint.lean:59:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwritten_delim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dConstraint_dctorElim_d__redArg(x_1, x_2);
@@ -1066,7 +1066,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dConstraint_dwritten_delim_d__redArg(lu
 }
 
 /* Lean: TaggedUrn.KeyState.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:40:1 */
+/* Source: TaggedUrn/Constraint.lean:41:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4, lungo_obj x_5) {
     (void)x_1;
     (void)x_2;
@@ -1078,7 +1078,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim(lungo_obj x_1, lung
 
 /* Lean: TaggedUrn.KeyState.ctorElim._boxed */
 /* Compiled from: TaggedUrn.KeyState.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:40:1 */
+/* Source: TaggedUrn/Constraint.lean:41:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4, lungo_obj x_5) {
     lungo_obj x_6;
     x_6 = tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim(x_1, x_2, x_3, x_4, x_5);
@@ -1088,7 +1088,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim_d__boxed(lungo_obj 
 
 /* Lean: TaggedUrn.KeyState.ctorElim._redArg */
 /* Compiled from: TaggedUrn.KeyState.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:40:1 */
+/* Source: TaggedUrn/Constraint.lean:41:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1134,7 +1134,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dctorIdx_d__boxed(lungo_obj x
 }
 
 /* Lean: TaggedUrn.KeyState.set.elim */
-/* Source: TaggedUrn/Constraint.lean:43:3 */
+/* Source: TaggedUrn/Constraint.lean:44:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dset_delim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4) {
     (void)x_1;
     (void)x_3;
@@ -1145,7 +1145,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dset_delim(lungo_obj x_1, lun
 
 /* Lean: TaggedUrn.KeyState.set.elim._redArg */
 /* Compiled from: TaggedUrn.KeyState.set.elim */
-/* Source: TaggedUrn/Constraint.lean:43:3 */
+/* Source: TaggedUrn/Constraint.lean:44:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dset_delim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim_d__redArg(x_1, x_2);
@@ -1153,7 +1153,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dset_delim_d__redArg(lungo_ob
 }
 
 /* Lean: TaggedUrn.KeyState.unset.elim */
-/* Source: TaggedUrn/Constraint.lean:42:3 */
+/* Source: TaggedUrn/Constraint.lean:43:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dunset_delim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4) {
     (void)x_1;
     (void)x_3;
@@ -1164,7 +1164,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dunset_delim(lungo_obj x_1, l
 
 /* Lean: TaggedUrn.KeyState.unset.elim._redArg */
 /* Compiled from: TaggedUrn.KeyState.unset.elim */
-/* Source: TaggedUrn/Constraint.lean:42:3 */
+/* Source: TaggedUrn/Constraint.lean:43:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dunset_delim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dKeyState_dctorElim_d__redArg(x_1, x_2);
@@ -1172,7 +1172,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dKeyState_dunset_delim_d__redArg(lungo_
 }
 
 /* Lean: TaggedUrn.Values.allows */
-/* Source: TaggedUrn/Constraint.lean:67:1 */
+/* Source: TaggedUrn/Constraint.lean:68:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dValues_dallows(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     uint8_t x_4;
@@ -1205,7 +1205,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dValues_dallows(lungo_obj x_1, lungo_obj 
 
 /* Lean: TaggedUrn.Values.allows._boxed */
 /* Compiled from: TaggedUrn.Values.allows */
-/* Source: TaggedUrn/Constraint.lean:67:1 */
+/* Source: TaggedUrn/Constraint.lean:68:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dallows_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1217,7 +1217,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dallows_d__boxed(lungo_obj x_1,
 }
 
 /* Lean: TaggedUrn.Values.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:46:1 */
+/* Source: TaggedUrn/Constraint.lean:47:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dctorElim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4, lungo_obj x_5) {
     (void)x_1;
     (void)x_2;
@@ -1229,7 +1229,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dctorElim(lungo_obj x_1, lungo_
 
 /* Lean: TaggedUrn.Values.ctorElim._boxed */
 /* Compiled from: TaggedUrn.Values.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:46:1 */
+/* Source: TaggedUrn/Constraint.lean:47:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dctorElim_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4, lungo_obj x_5) {
     lungo_obj x_6;
     x_6 = tagged_urn_formal__l_TaggedUrn_dValues_dctorElim(x_1, x_2, x_3, x_4, x_5);
@@ -1239,7 +1239,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dctorElim_d__boxed(lungo_obj x_
 
 /* Lean: TaggedUrn.Values.ctorElim._redArg */
 /* Compiled from: TaggedUrn.Values.ctorElim */
-/* Source: TaggedUrn/Constraint.lean:46:1 */
+/* Source: TaggedUrn/Constraint.lean:47:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dctorElim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1278,7 +1278,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dctorIdx_d__boxed(lungo_obj x_1
 }
 
 /* Lean: TaggedUrn.Values.join */
-/* Source: TaggedUrn/Constraint.lean:84:1 */
+/* Source: TaggedUrn/Constraint.lean:85:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_djoin(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1487,7 +1487,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_djoin(lungo_obj x_1, lungo_obj 
 }
 
 /* Lean: TaggedUrn.Values.meet */
-/* Source: TaggedUrn/Constraint.lean:78:1 */
+/* Source: TaggedUrn/Constraint.lean:79:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dmeet(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1696,7 +1696,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dmeet(lungo_obj x_1, lungo_obj 
 }
 
 /* Lean: TaggedUrn.Values.none */
-/* Source: TaggedUrn/Constraint.lean:90:1 */
+/* Source: TaggedUrn/Constraint.lean:91:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dValues_dnone(lungo_obj x_1) {
     lungo_obj x_2;
     uint8_t x_3;
@@ -1716,7 +1716,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dValues_dnone(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.Values.none._boxed */
 /* Compiled from: TaggedUrn.Values.none */
-/* Source: TaggedUrn/Constraint.lean:90:1 */
+/* Source: TaggedUrn/Constraint.lean:91:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dnone_d__boxed(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -1727,7 +1727,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dnone_d__boxed(lungo_obj x_1) {
 }
 
 /* Lean: TaggedUrn.Values.noneOf.elim */
-/* Source: TaggedUrn/Constraint.lean:50:3 */
+/* Source: TaggedUrn/Constraint.lean:51:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dnoneOf_delim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4) {
     (void)x_1;
     (void)x_3;
@@ -1738,7 +1738,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dnoneOf_delim(lungo_obj x_1, lu
 
 /* Lean: TaggedUrn.Values.noneOf.elim._redArg */
 /* Compiled from: TaggedUrn.Values.noneOf.elim */
-/* Source: TaggedUrn/Constraint.lean:50:3 */
+/* Source: TaggedUrn/Constraint.lean:51:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dnoneOf_delim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dValues_dctorElim_d__redArg(x_1, x_2);
@@ -1746,7 +1746,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dnoneOf_delim_d__redArg(lungo_o
 }
 
 /* Lean: TaggedUrn.Values.oneOf.elim */
-/* Source: TaggedUrn/Constraint.lean:48:3 */
+/* Source: TaggedUrn/Constraint.lean:49:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_doneOf_delim(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3, lungo_obj x_4) {
     (void)x_1;
     (void)x_3;
@@ -1757,7 +1757,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_doneOf_delim(lungo_obj x_1, lun
 
 /* Lean: TaggedUrn.Values.oneOf.elim._redArg */
 /* Compiled from: TaggedUrn.Values.oneOf.elim */
-/* Source: TaggedUrn/Constraint.lean:48:3 */
+/* Source: TaggedUrn/Constraint.lean:49:3 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_doneOf_delim_d__redArg(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dValues_dctorElim_d__redArg(x_1, x_2);
@@ -1765,7 +1765,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_doneOf_delim_d__redArg(lungo_ob
 }
 
 /* Lean: TaggedUrn.Values.sub */
-/* Source: TaggedUrn/Constraint.lean:71:1 */
+/* Source: TaggedUrn/Constraint.lean:72:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dValues_dsub(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1813,7 +1813,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dValues_dsub(lungo_obj x_1, lungo_obj x_2
 
 /* Lean: TaggedUrn.Values.sub._boxed */
 /* Compiled from: TaggedUrn.Values.sub */
-/* Source: TaggedUrn/Constraint.lean:71:1 */
+/* Source: TaggedUrn/Constraint.lean:72:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dsub_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1825,7 +1825,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dsub_d__boxed(lungo_obj x_1, lu
 }
 
 /* Lean: TaggedUrn.Values.witness */
-/* Source: TaggedUrn/Constraint.lean:174:1 */
+/* Source: TaggedUrn/Constraint.lean:175:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dwitness(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_4;
@@ -1929,7 +1929,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dValues_dwitness(lungo_obj x_1) {
 }
 
 /* Lean: TaggedUrn.fresh */
-/* Source: TaggedUrn/Constraint.lean:99:1 */
+/* Source: TaggedUrn/Constraint.lean:100:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dfresh(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_3;
@@ -1952,7 +1952,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dfresh(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.fresh._closed_0 */
 /* Compiled from: TaggedUrn.fresh */
-/* Source: TaggedUrn/Constraint.lean:99:1 */
+/* Source: TaggedUrn/Constraint.lean:100:1 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dfresh_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"", 0, 0);
@@ -1964,7 +1964,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dfresh_d__closed__0(void) {
 }
 
 /* Lean: TaggedUrn.instDecidableEqConstraint */
-/* Source: TaggedUrn/Constraint.lean:59:12 */
+/* Source: TaggedUrn/Constraint.lean:60:12 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_ddecEq(x_1, x_2);
@@ -1973,7 +1973,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint(lungo_obj x_1,
 
 /* Lean: TaggedUrn.instDecidableEqConstraint._boxed */
 /* Compiled from: TaggedUrn.instDecidableEqConstraint */
-/* Source: TaggedUrn/Constraint.lean:59:12 */
+/* Source: TaggedUrn/Constraint.lean:60:12 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1983,7 +1983,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_d__boxed(lun
 }
 
 /* Lean: TaggedUrn.instDecidableEqConstraint.decEq */
-/* Source: TaggedUrn/Constraint.lean:59:12 */
+/* Source: TaggedUrn/Constraint.lean:60:12 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_ddecEq(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     uint8_t x_4;
@@ -2067,7 +2067,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_ddecEq(lungo_o
 
 /* Lean: TaggedUrn.instDecidableEqConstraint.decEq._boxed */
 /* Compiled from: TaggedUrn.instDecidableEqConstraint.decEq */
-/* Source: TaggedUrn/Constraint.lean:59:12 */
+/* Source: TaggedUrn/Constraint.lean:60:12 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_ddecEq_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -2077,7 +2077,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqConstraint_ddecEq_d__bo
 }
 
 /* Lean: TaggedUrn.instDecidableEqKeyState */
-/* Source: TaggedUrn/Constraint.lean:44:12 */
+/* Source: TaggedUrn/Constraint.lean:45:12 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_ddecEq(x_1, x_2);
@@ -2086,7 +2086,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState(lungo_obj x_1, l
 
 /* Lean: TaggedUrn.instDecidableEqKeyState._boxed */
 /* Compiled from: TaggedUrn.instDecidableEqKeyState */
-/* Source: TaggedUrn/Constraint.lean:44:12 */
+/* Source: TaggedUrn/Constraint.lean:45:12 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -2098,7 +2098,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_d__boxed(lungo
 }
 
 /* Lean: TaggedUrn.instDecidableEqKeyState.decEq */
-/* Source: TaggedUrn/Constraint.lean:44:12 */
+/* Source: TaggedUrn/Constraint.lean:45:12 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_ddecEq(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     uint8_t x_4;
@@ -2145,7 +2145,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_ddecEq(lungo_obj
 
 /* Lean: TaggedUrn.instDecidableEqKeyState.decEq._boxed */
 /* Compiled from: TaggedUrn.instDecidableEqKeyState.decEq */
-/* Source: TaggedUrn/Constraint.lean:44:12 */
+/* Source: TaggedUrn/Constraint.lean:45:12 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_ddecEq_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -2157,7 +2157,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqKeyState_ddecEq_d__boxe
 }
 
 /* Lean: TaggedUrn.instDecidableEqValues */
-/* Source: TaggedUrn/Constraint.lean:52:12 */
+/* Source: TaggedUrn/Constraint.lean:53:12 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_ddecEq(x_1, x_2);
@@ -2166,7 +2166,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues(lungo_obj x_1, lun
 
 /* Lean: TaggedUrn.instDecidableEqValues._boxed */
 /* Compiled from: TaggedUrn.instDecidableEqValues */
-/* Source: TaggedUrn/Constraint.lean:52:12 */
+/* Source: TaggedUrn/Constraint.lean:53:12 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -2176,7 +2176,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_d__boxed(lungo_o
 }
 
 /* Lean: TaggedUrn.instDecidableEqValues.decEq */
-/* Source: TaggedUrn/Constraint.lean:52:12 */
+/* Source: TaggedUrn/Constraint.lean:53:12 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_ddecEq(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -2236,7 +2236,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_ddecEq(lungo_obj x
 
 /* Lean: TaggedUrn.instDecidableEqValues.decEq._boxed */
 /* Compiled from: TaggedUrn.instDecidableEqValues.decEq */
-/* Source: TaggedUrn/Constraint.lean:52:12 */
+/* Source: TaggedUrn/Constraint.lean:53:12 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_ddecEq_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -2246,7 +2246,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqValues_ddecEq_d__boxed(
 }
 
 /* Lean: TaggedUrn.instReprConstraint */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint__init(void) {
     lungo_obj x_1;
     x_1 = tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_d__closed__0();
@@ -2259,7 +2259,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint(void) {
 
 /* Lean: TaggedUrn.instReprConstraint._closed_0 */
 /* Compiled from: TaggedUrn.instReprConstraint */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_alloc_closure((void *)tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__boxed, 2, 0);
@@ -2271,7 +2271,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_d__closed__0(void) 
 }
 
 /* Lean: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -2412,7 +2412,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr(lungo_obj x_1
 
 /* Lean: TaggedUrn.instReprConstraint.repr._boxed */
 /* Compiled from: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr(x_1, x_2);
@@ -2422,7 +2422,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__boxed(lung
 
 /* Lean: TaggedUrn.instReprConstraint.repr._closed_0 */
 /* Compiled from: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"TaggedUrn.Constraint.missing", 28, 28);
@@ -2435,7 +2435,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__0(
 
 /* Lean: TaggedUrn.instReprConstraint.repr._closed_1 */
 /* Compiled from: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__1__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2451,7 +2451,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__1(
 
 /* Lean: TaggedUrn.instReprConstraint.repr._closed_2 */
 /* Compiled from: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__2__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"TaggedUrn.Constraint.written", 28, 28);
@@ -2464,7 +2464,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__2(
 
 /* Lean: TaggedUrn.instReprConstraint.repr._closed_3 */
 /* Compiled from: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__3__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2480,7 +2480,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__3(
 
 /* Lean: TaggedUrn.instReprConstraint.repr._closed_4 */
 /* Compiled from: TaggedUrn.instReprConstraint.repr */
-/* Source: TaggedUrn/Constraint.lean:59:25 */
+/* Source: TaggedUrn/Constraint.lean:60:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__4__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2498,7 +2498,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprConstraint_drepr_d__closed__4(
 }
 
 /* Lean: TaggedUrn.instReprKeyState */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState__init(void) {
     lungo_obj x_1;
     x_1 = tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_d__closed__0();
@@ -2511,7 +2511,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState(void) {
 
 /* Lean: TaggedUrn.instReprKeyState._closed_0 */
 /* Compiled from: TaggedUrn.instReprKeyState */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_alloc_closure((void *)tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__boxed, 2, 0);
@@ -2523,7 +2523,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_d__closed__0(void) {
 }
 
 /* Lean: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -2651,7 +2651,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr(lungo_obj x_1, 
 
 /* Lean: TaggedUrn.instReprKeyState.repr._boxed */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr(x_1, x_2);
@@ -2661,7 +2661,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__boxed(lungo_
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_0 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"TaggedUrn.KeyState.unset", 24, 24);
@@ -2674,7 +2674,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__0(vo
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_1 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__1__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2690,7 +2690,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__1(vo
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_2 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__2__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2705,7 +2705,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__2(vo
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_3 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__3__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2720,7 +2720,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__3(vo
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_4 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__4__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"TaggedUrn.KeyState.set", 22, 22);
@@ -2733,7 +2733,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__4(vo
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_5 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__5__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2749,7 +2749,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__5(vo
 
 /* Lean: TaggedUrn.instReprKeyState.repr._closed_6 */
 /* Compiled from: TaggedUrn.instReprKeyState.repr */
-/* Source: TaggedUrn/Constraint.lean:44:25 */
+/* Source: TaggedUrn/Constraint.lean:45:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__6__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2767,7 +2767,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprKeyState_drepr_d__closed__6(vo
 }
 
 /* Lean: TaggedUrn.instReprValues */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues__init(void) {
     lungo_obj x_1;
     x_1 = tagged_urn_formal__l_TaggedUrn_dinstReprValues_d__closed__0();
@@ -2780,7 +2780,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues(void) {
 
 /* Lean: TaggedUrn.instReprValues._closed_0 */
 /* Compiled from: TaggedUrn.instReprValues */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_alloc_closure((void *)tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__boxed, 2, 0);
@@ -2792,7 +2792,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_d__closed__0(void) {
 }
 
 /* Lean: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_5;
@@ -2896,7 +2896,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr(lungo_obj x_1, lu
 
 /* Lean: TaggedUrn.instReprValues.repr._boxed */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr(x_1, x_2);
@@ -2906,7 +2906,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__boxed(lungo_ob
 
 /* Lean: TaggedUrn.instReprValues.repr._closed_0 */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__0__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"TaggedUrn.Values.oneOf", 22, 22);
@@ -2919,7 +2919,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__0(void
 
 /* Lean: TaggedUrn.instReprValues.repr._closed_1 */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__1__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2935,7 +2935,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__1(void
 
 /* Lean: TaggedUrn.instReprValues.repr._closed_2 */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__2__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2954,7 +2954,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__2(void
 
 /* Lean: TaggedUrn.instReprValues.repr._closed_3 */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__3__init(void) {
     lungo_obj x_1;
     x_1 = lungo_mk_string_unchecked((const uint8_t *)"TaggedUrn.Values.noneOf", 23, 23);
@@ -2967,7 +2967,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__3(void
 
 /* Lean: TaggedUrn.instReprValues.repr._closed_4 */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__4__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -2983,7 +2983,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__4(void
 
 /* Lean: TaggedUrn.instReprValues.repr._closed_5 */
 /* Compiled from: TaggedUrn.instReprValues.repr */
-/* Source: TaggedUrn/Constraint.lean:52:25 */
+/* Source: TaggedUrn/Constraint.lean:53:25 */
 static lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__5__init(void) {
     lungo_obj x_1;
     lungo_obj x_2;
@@ -3001,7 +3001,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprValues_drepr_d__closed__5(void
 }
 
 /* Lean: TaggedUrn.meetState */
-/* Source: TaggedUrn/Constraint.lean:366:1 */
+/* Source: TaggedUrn/Constraint.lean:367:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dmeetState(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -3086,7 +3086,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dmeetState(lungo_obj x_1, lungo_obj x_2
 
 /* Lean: TaggedUrn.meetState._boxed */
 /* Compiled from: TaggedUrn.meetState */
-/* Source: TaggedUrn/Constraint.lean:366:1 */
+/* Source: TaggedUrn/Constraint.lean:367:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dmeetState_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     x_3 = tagged_urn_formal__l_TaggedUrn_dmeetState(x_1, x_2);
@@ -3096,7 +3096,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dmeetState_d__boxed(lungo_obj x_1, lung
 }
 
 /* Lean: TaggedUrn.tagMatch */
-/* Source: TaggedUrn/Constraint.lean:245:1 */
+/* Source: TaggedUrn/Constraint.lean:246:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dtagMatch(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -3131,7 +3131,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dtagMatch(lungo_obj x_1, lungo_obj x_2) {
 
 /* Lean: TaggedUrn.tagMatch._boxed */
 /* Compiled from: TaggedUrn.tagMatch */
-/* Source: TaggedUrn/Constraint.lean:245:1 */
+/* Source: TaggedUrn/Constraint.lean:246:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtagMatch_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -3143,7 +3143,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dtagMatch_d__boxed(lungo_obj x_1, lungo
 }
 
 /* Lean: TaggedUrn.tagMeets */
-/* Source: TaggedUrn/Constraint.lean:361:1 */
+/* Source: TaggedUrn/Constraint.lean:362:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dtagMeets(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -3191,7 +3191,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dtagMeets(lungo_obj x_1, lungo_obj x_2) {
 
 /* Lean: TaggedUrn.tagMeets._boxed */
 /* Compiled from: TaggedUrn.tagMeets */
-/* Source: TaggedUrn/Constraint.lean:361:1 */
+/* Source: TaggedUrn/Constraint.lean:362:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtagMeets_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;

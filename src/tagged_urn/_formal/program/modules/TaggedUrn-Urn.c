@@ -1068,7 +1068,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEqUrn_ddecEq_d__lam__0_d_
 }
 
 /* Lean: TaggedUrn.instDecidableEquivalent */
-/* Source: TaggedUrn/Urn.lean:95:1 */
+/* Source: TaggedUrn/Urn.lean:111:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEquivalent(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     uint8_t x_4;
@@ -1088,7 +1088,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableEquivalent(lungo_obj x_1, l
 
 /* Lean: TaggedUrn.instDecidableEquivalent._boxed */
 /* Compiled from: TaggedUrn.instDecidableEquivalent */
-/* Source: TaggedUrn/Urn.lean:95:1 */
+/* Source: TaggedUrn/Urn.lean:111:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEquivalent_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1098,7 +1098,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableEquivalent_d__boxed(lungo
 }
 
 /* Lean: TaggedUrn.instDecidableMeets */
-/* Source: TaggedUrn/Urn.lean:165:1 */
+/* Source: TaggedUrn/Urn.lean:191:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1134,7 +1134,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets(lungo_obj x_1, lungo_
 
 /* Lean: TaggedUrn.instDecidableMeets._boxed */
 /* Compiled from: TaggedUrn.instDecidableMeets */
-/* Source: TaggedUrn/Urn.lean:165:1 */
+/* Source: TaggedUrn/Urn.lean:191:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1145,7 +1145,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets_d__boxed(lungo_obj 
 
 /* Lean: TaggedUrn.instDecidableMeets._lam_0 */
 /* Compiled from: TaggedUrn.instDecidableMeets */
-/* Source: TaggedUrn/Urn.lean:165:1 */
+/* Source: TaggedUrn/Urn.lean:191:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets_d__lam__0(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -1160,7 +1160,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets_d__lam__0(lungo_obj x
 
 /* Lean: TaggedUrn.instDecidableMeets._lam_0._boxed */
 /* Compiled from: TaggedUrn.instDecidableMeets */
-/* Source: TaggedUrn/Urn.lean:165:1 */
+/* Source: TaggedUrn/Urn.lean:191:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets_d__lam__0_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -1173,7 +1173,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeets_d__lam__0_d__boxed(
 }
 
 /* Lean: TaggedUrn.instDecidableMeetsClosed */
-/* Source: TaggedUrn/Urn.lean:284:1 */
+/* Source: TaggedUrn/Urn.lean:332:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1209,7 +1209,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed(lungo_obj x_1, 
 
 /* Lean: TaggedUrn.instDecidableMeetsClosed._boxed */
 /* Compiled from: TaggedUrn.instDecidableMeetsClosed */
-/* Source: TaggedUrn/Urn.lean:284:1 */
+/* Source: TaggedUrn/Urn.lean:332:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1220,7 +1220,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed_d__boxed(lung
 
 /* Lean: TaggedUrn.instDecidableMeetsClosed._lam_0 */
 /* Compiled from: TaggedUrn.instDecidableMeetsClosed */
-/* Source: TaggedUrn/Urn.lean:284:1 */
+/* Source: TaggedUrn/Urn.lean:332:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed_d__lam__0(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -1238,7 +1238,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed_d__lam__0(lungo
 
 /* Lean: TaggedUrn.instDecidableMeetsClosed._lam_0._boxed */
 /* Compiled from: TaggedUrn.instDecidableMeetsClosed */
-/* Source: TaggedUrn/Urn.lean:284:1 */
+/* Source: TaggedUrn/Urn.lean:332:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableMeetsClosed_d__lam__0_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -1326,7 +1326,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefines_d__lam__0_d__boxe
 }
 
 /* Lean: TaggedUrn.instDecidableRefinesBothClosed */
-/* Source: TaggedUrn/Urn.lean:329:1 */
+/* Source: TaggedUrn/Urn.lean:377:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1362,7 +1362,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed(lungo_obj
 
 /* Lean: TaggedUrn.instDecidableRefinesBothClosed._boxed */
 /* Compiled from: TaggedUrn.instDecidableRefinesBothClosed */
-/* Source: TaggedUrn/Urn.lean:329:1 */
+/* Source: TaggedUrn/Urn.lean:377:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1373,7 +1373,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__boxe
 
 /* Lean: TaggedUrn.instDecidableRefinesBothClosed._lam_0 */
 /* Compiled from: TaggedUrn.instDecidableRefinesBothClosed */
-/* Source: TaggedUrn/Urn.lean:329:1 */
+/* Source: TaggedUrn/Urn.lean:377:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -1394,7 +1394,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0
 
 /* Lean: TaggedUrn.instDecidableRefinesBothClosed._lam_0._boxed */
 /* Compiled from: TaggedUrn.instDecidableRefinesBothClosed */
-/* Source: TaggedUrn/Urn.lean:329:1 */
+/* Source: TaggedUrn/Urn.lean:377:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam__0_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -1407,7 +1407,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesBothClosed_d__lam_
 }
 
 /* Lean: TaggedUrn.instDecidableRefinesClosed */
-/* Source: TaggedUrn/Urn.lean:223:1 */
+/* Source: TaggedUrn/Urn.lean:260:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed(lungo_obj x_1, lungo_obj x_2) {
     lungo_obj x_3;
     lungo_obj x_4;
@@ -1443,7 +1443,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed(lungo_obj x_1
 
 /* Lean: TaggedUrn.instDecidableRefinesClosed._boxed */
 /* Compiled from: TaggedUrn.instDecidableRefinesClosed */
-/* Source: TaggedUrn/Urn.lean:223:1 */
+/* Source: TaggedUrn/Urn.lean:260:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed_d__boxed(lungo_obj x_1, lungo_obj x_2) {
     uint8_t x_3;
     lungo_obj x_4;
@@ -1454,7 +1454,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed_d__boxed(lu
 
 /* Lean: TaggedUrn.instDecidableRefinesClosed._lam_0 */
 /* Compiled from: TaggedUrn.instDecidableRefinesClosed */
-/* Source: TaggedUrn/Urn.lean:223:1 */
+/* Source: TaggedUrn/Urn.lean:260:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed_d__lam__0(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     lungo_obj x_4;
     lungo_obj x_5;
@@ -1472,7 +1472,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed_d__lam__0(lun
 
 /* Lean: TaggedUrn.instDecidableRefinesClosed._lam_0._boxed */
 /* Compiled from: TaggedUrn.instDecidableRefinesClosed */
-/* Source: TaggedUrn/Urn.lean:223:1 */
+/* Source: TaggedUrn/Urn.lean:260:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dinstDecidableRefinesClosed_d__lam__0_d__boxed(lungo_obj x_1, lungo_obj x_2, lungo_obj x_3) {
     uint8_t x_4;
     lungo_obj x_5;
@@ -1903,7 +1903,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dinstReprUrn_drepr_d__redArg_d__closed_
 }
 
 /* Lean: TaggedUrn.tagScore */
-/* Source: TaggedUrn/Urn.lean:399:1 */
+/* Source: TaggedUrn/Urn.lean:447:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore(lungo_obj x_1) {
     lungo_obj x_2;
     uint8_t x_3;
@@ -2017,7 +2017,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.tagScore._boxed */
 /* Compiled from: TaggedUrn.tagScore */
-/* Source: TaggedUrn/Urn.lean:399:1 */
+/* Source: TaggedUrn/Urn.lean:447:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore_d__boxed(lungo_obj x_1) {
     lungo_obj x_2;
     x_2 = tagged_urn_formal__l_TaggedUrn_dtagScore(x_1);
@@ -2026,7 +2026,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dtagScore_d__boxed(lungo_obj x_1) {
 }
 
 /* Lean: TaggedUrn.twoDistinct */
-/* Source: TaggedUrn/Urn.lean:396:1 */
+/* Source: TaggedUrn/Urn.lean:444:1 */
 uint8_t tagged_urn_formal__l_TaggedUrn_dtwoDistinct(lungo_obj x_1) {
     uint8_t x_2;
     x_2 = tagged_urn_formal__l_List_dany_d__at___dTaggedUrn_dtwoDistinct_dspec__1(x_1, x_1);
@@ -2035,7 +2035,7 @@ uint8_t tagged_urn_formal__l_TaggedUrn_dtwoDistinct(lungo_obj x_1) {
 
 /* Lean: TaggedUrn.twoDistinct._boxed */
 /* Compiled from: TaggedUrn.twoDistinct */
-/* Source: TaggedUrn/Urn.lean:396:1 */
+/* Source: TaggedUrn/Urn.lean:444:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_dtwoDistinct_d__boxed(lungo_obj x_1) {
     uint8_t x_2;
     lungo_obj x_3;
@@ -2046,7 +2046,7 @@ lungo_obj tagged_urn_formal__l_TaggedUrn_dtwoDistinct_d__boxed(lungo_obj x_1) {
 }
 
 /* Lean: TaggedUrn.urnScore */
-/* Source: TaggedUrn/Urn.lean:415:1 */
+/* Source: TaggedUrn/Urn.lean:463:1 */
 lungo_obj tagged_urn_formal__l_TaggedUrn_durnScore(lungo_obj x_1) {
     lungo_obj x_2;
     lungo_obj x_3;
