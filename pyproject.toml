@@ -1,17 +1,17 @@
 # The package builds the program generated from the proved model in ../formal (src/tagged_urn/_formal,
 # see ../lungo.toml) with CMake, on lungo-py — at exactly the lungo release that generated it.
 [build-system]
-requires = ["scikit-build-core>=0.10", "lungo-py==1.127.0"]
+requires = ["scikit-build-core>=0.10", "lungo-py==1.131.83"]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "tagged-urn"
-version = "1.155.0"
+version = "1.156.0"
 description = "Tagged URN - Flat tag-based identifier system"
 authors = [{name = "https://github.com/machinefabric"}]
 license = {text = "MIT"}
 requires-python = ">=3.9"
-dependencies = ["lungo-py==1.127.0"]
+dependencies = ["lungo-py==1.131.83"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
